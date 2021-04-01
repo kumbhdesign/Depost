@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:autofit="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:fitsSystemWindows="true"
     android:id="@+id/re_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#DEDEDE"
     tools:context=".ImageEditActivity">
 
     <com.droidninja.imageeditengine.views.PhotoEditorView
         android:id="@+id/photo_editor_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
         android:visibility="visible"
-        android:scaleType="centerCrop"/>
+
+        />
 
     <RelativeLayout
         android:id="@+id/toolbar_layout"
@@ -26,39 +25,183 @@
 
     </RelativeLayout>
 
-
+    <ImageView
+        android:id="@+id/delete_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_color"
+        android:padding="15dp"
+        android:src="@drawable/ic_cam_delete"
+        android:visibility="gone"
+        tools:ignore="MissingPrefix" />
 
     <ImageView
         android:id="@+id/back_iv"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/ic_cam_back"
-        android:clickable="true"
         android:layout_marginLeft="10dp"
-        android:background="@drawable/share_back"/>
+        android:layout_marginTop="10dp"
+        android:background="@drawable/share_back"
+        android:clickable="true"
+        android:padding="5dp"
+        android:src="@drawable/ic_cam_back" />
+
+    <ImageView
+        android:id="@+id/back_color"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="12dp"
+        android:layout_toStartOf="@+id/add_text_btn"
+        android:layout_toLeftOf="@+id/add_text_btn"
+        android:background="@drawable/share_back"
+        android:clickable="true"
+        android:padding="5dp"
+        android:src="@drawable/paint"
+        android:visibility="gone" />
+
+    <com.droidninja.imageeditengine.brush.ColorPicker
+        android:id="@+id/color_picker1"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="10dp"
+       android:layout_above="@id/card"
+        android:visibility="gone"></com.droidninja.imageeditengine.brush.ColorPicker>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/card"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary">
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorPrimary"
+            android:weightSum="1">
 
 
+            <ImageView
+                android:id="@+id/imageButtonFontChanges1"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="0.22"
+                android:src="@drawable/text_face"
+                android:visibility="gone" />
 
 
+            <ImageView
+                android:id="@+id/imageButtonAlignmentChanges1"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="0.22"
+                android:src="@drawable/font_center"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/font_bold1"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="0.22"
+                android:src="@drawable/bold"
+                android:tint="@color/white"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/color_icon"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="0.22"
+                android:src="@drawable/color"
+                android:tint="@color/white"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+    <!--    <ImageView-->
+    <!--        android:id="@+id/stickers_btn"-->
+    <!--        android:layout_width="32dp"-->
+    <!--        android:layout_height="32dp"-->
+    <!--        android:visibility="gone"-->
+    <!--        android:padding="5dp"-->
+    <!--        android:layout_marginTop="10dp"-->
+    <!--        android:layout_toLeftOf="@+id/add_text_btn"-->
+    <!--        android:layout_toStartOf="@+id/add_text_btn"-->
+    <!--        android:src="@drawable/ic_cam_sticker"-->
+    <!--        android:clickable="true"-->
+    <!--        android:layout_marginRight="12dp"-->
+    <!--        android:background="@drawable/share_back"/>-->
+
+    <ImageView
+        android:id="@+id/add_text_btn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="12dp"
+        android:layout_toLeftOf="@+id/paint_btn"
+        android:background="@drawable/share_back"
+        android:clickable="true"
+        android:padding="5dp"
+        android:src="@drawable/ic_cam_text"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/paint_btn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/share_back"
+        android:clickable="true"
+        android:padding="5dp"
+        android:src="@drawable/ic_cam_draw"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="18dp"
         android:layout_marginBottom="18dp"
-        android:padding="10dp"
-        android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
         android:background="@drawable/sharebutton"
-        android:text="Share to"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:drawableRight="@drawable/ic_keyboard_arrow_right_black_24dp"
+        android:padding="10dp"
+        android:text="Share to" />
 
-
+    <ImageView
+        android:id="@+id/imgshoot"
+        android:layout_width="55dp"
+        android:layout_height="18dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone" />
 
 </RelativeLayout>

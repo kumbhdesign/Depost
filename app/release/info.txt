@@ -1,0 +1,4 @@
+key alias : kumbhdesign
+alias password : kumbhdesign
+password : kumbhdesign
+key alias path : D:\projects\Depost_19_2_2019\app

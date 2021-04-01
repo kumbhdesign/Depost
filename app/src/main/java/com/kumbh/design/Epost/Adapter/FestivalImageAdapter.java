@@ -82,7 +82,7 @@ public class FestivalImageAdapter extends RecyclerView.Adapter<FestivalImageAdap
 
 
 
-        holder.img_test.setImageDrawable(context.getResources().getDrawable(R.drawable.logo_cicle));
+//        holder.img_test.setImageDrawable(context.getResources().getDrawable(R.drawable.logo_cicle));
 
 
     }
@@ -108,7 +108,7 @@ public class FestivalImageAdapter extends RecyclerView.Adapter<FestivalImageAdap
             imageView = itemView.findViewById(R.id.image1);
             relativeLayout = itemView.findViewById(R.id.grid_image);
             animationView = itemView.findViewById(R.id.animation_view);
-            img_test=itemView.findViewById(R.id.img_set);
+//            img_test=itemView.findViewById(R.id.img_set);
 
         }
     }

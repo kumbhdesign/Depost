@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:shader="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:id="@+id/draw_main_frame">
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/draw_action_layout"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/canvas_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/onDone_iv"
+            android:background="@android:color/transparent"
+            android:clickable="false"
+            />
+
+        <com.droidninja.imageeditengine.brush.ColorPicker
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:id="@+id/color_picker">
+        </com.droidninja.imageeditengine.brush.ColorPicker>
+
+        <LinearLayout
+            android:id="@+id/iui_seekbar_layout"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center"
+            android:background="@drawable/iui_seekbar_bg_90"
+            android:rotation="270"
+            android:layout_marginTop="48dp"
+            android:layout_marginLeft="10dp"
+            android:translationX="-90dp"
+            android:translationY="-50dp">
+
+            <SeekBar
+                android:id="@+id/stroke_width_seekbar"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:rotation="0"
+                android:thumbTint="@color/white"/>
+            <!--</LinearLayout>-->
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/undo_frame"
+            android:layout_width="match_parent"
+            android:layout_height="64dip"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/stroke_width_layout"
+                android:layout_width="match_parent"
+                android:layout_height="48dip"
+                android:background="@drawable/brushes_background"
+                android:gravity="end"
+                android:orientation="vertical">
+
+            <ImageButton
+                android:layout_gravity="end"
+                android:id="@+id/show_stroke_bar"
+                android:layout_width="36dip"
+                android:layout_height="48dip"
+                android:layout_marginEnd="60dip"
+                android:layout_marginRight="60dip"
+                android:background="@android:color/transparent"
+                android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <!--<HorizontalScrollView-->
+                <!--android:scrollbars="none"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="70dip"-->
+                <!--android:fillViewport="true"-->
+                <!--android:paddingBottom="8dip"-->
+                <!--android:layout_marginBottom="6dp"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:layout_marginLeft="5dp"-->
+                <!--android:layout_marginRight="5dp">-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@android:color/transparent"
+                    android:id="@+id/brush_option_frame">
+
+                    <ImageButton
+                        android:id="@+id/undo_btn"
+                        android:layout_width="31dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="3dp"
+                        android:background="@drawable/share_back"
+                        android:padding="6dp"
+                        android:src="@drawable/undo" />
+                        <!--draw_canceled-->
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:gravity="center"
+                        android:id="@+id/emboss_brush"
+                        android:src="@drawable/pencil"
+                        android:background="@drawable/share_back"
+                        android:padding="6dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="5dp"/>
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:gravity="center"
+                        android:id="@+id/normal_brush"
+                        android:src="@drawable/normal"
+                        android:padding="4dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/share_back"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="5dp"/>
+
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:gravity="center"
+                        android:id="@+id/inner_brush"
+                        android:src="@drawable/thick"
+                        android:padding="6dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/share_back"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="5dp"/>
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:gravity="center"
+                        android:id="@+id/neon_brush"
+                        android:src="@drawable/thin"
+                        android:padding="6dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/share_back"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="5dp"/>
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:gravity="center"
+                        android:id="@+id/blur_brush"
+                        android:src="@drawable/blur"
+                        android:padding="4dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/share_back"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="5dp"/>
+
+                    <!--<com.droidninja.imageeditengine.brush.ShaderTextView-->
+                        <!--android:layout_width="32dp"-->
+                        <!--android:layout_height="32dp"-->
+                        <!--android:background="@drawable/share_back"-->
+                        <!--android:text="i"-->
+                        <!--android:textStyle="bold"-->
+                        <!--android:gravity="center"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:textSize="50sp"-->
+                        <!--android:textColor="@color/white"-->
+                        <!--android:id="@+id/blur_brush"-->
+                        <!--shader:mask_id="blur"-->
+                        <!--shader:mask_radius="14"-->
+                        <!--android:layout_marginLeft="4dp"-->
+                        <!--android:layout_marginRight="3dp"-->
+                        <!--android:layout_marginBottom="5dp"-->
+                        <!--android:paddingBottom="3dp"/>-->
+
+
+                    <com.droidninja.imageeditengine.brush.ShaderTextView
+                        android:layout_width="30dip"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/share_back"
+                        android:text="i"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textSize="50dp"
+                        android:textColor="@color/white"
+                        android:layout_weight="1"
+                        android:id="@+id/deboss_brush"
+                        shader:mask_id="deboss"
+                        android:layout_marginLeft="4dp"
+                        shader:mask_radius="14"
+                        android:visibility="gone"/>
+
+
+                    <TextView
+                        android:id="@+id/draw_done"
+                        android:layout_width="69dp"
+                        android:layout_height="33dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="6dp"
+                        android:layout_marginLeft="3dp"
+                        android:background="@drawable/rounded_border_text_view"
+                        android:text="Done"
+                        android:gravity="center"
+                        android:textSize="16dp"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="5dp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

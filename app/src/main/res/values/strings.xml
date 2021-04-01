@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">DePost</string>
+    <string name="spinner_categary">Event_Name</string>
+    <string name="server_client_id">1092181658928-id13uj25lm7k92s9rrbduuapss3v79a5.apps.googleusercontent.com</string>
+    <string name="action_select">pick</string>
+
+    <string name="label_brush">Brush</string>
+    <string name="label_emoji">Emoji</string>
+    <string name="label_sticker">Sticker</string>
+    <string name="label_eraser">Eraser</string>
+    <string name="label_text">Text</string>
+    <string name="label_filter">Filter</string>
+    <string name="label_adjust">Adjust</string>
+
+    <!--<string name="TheBeautyline_FreeVersion">fonts/TheBeautyline-FreeVersion.ttf</string>-->
+    <!--<string name="Chapaza">fonts/Chapaza.ttf</string>-->
+    <!--<string name="Candy_Beans">fonts/Candy Beans.otf</string>-->
+    <!--<string name="Billabong">fonts/Billabong.ttf</string>-->
+    <!--<string name="LearningCurve">fonts/LearningCurve.ttf</string>-->
+
+
+    <string name="banner_ad_unit_id">ca-app-pub-6008474329722648/8080587611</string>
+    <string name="banner_ad_app_id"> ca-app-pub-6008474329722648~3510787218</string>
+
+    <string name="delete">Are You Sure You Want to Delete This event?</string>
+    <string name="Yes">YES</string>
+    <string name="No">NO</string>
+
+    <string name="channel_name">Notification Channel</string>
+    <string name="channel_description">Notification Description</string>
+
+    <string name="share">Create Beautiful Social Post with Depost </string>
+    <string name="share_via">Share Via</string>
+
+    <string name="interstitial_full_screen"> ca-app-pub-6008474329722648/5562235488</string>
+
+</resources>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="org.zkoss.calendar:calendar:2.1.0@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-2.10-all/caches/modules-2/files-2.1/org.zkoss.calendar/calendar/2.1.0/86a862be6a435d9c47c1dcbb211f2eba53050762/calendar-2.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-2.10-all/caches/modules-2/files-2.1/org.zkoss.calendar/calendar/2.1.0/97cb95510fc4f957596ab44a3900056b8be989ab/calendar-2.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="io.fotoapparat.fotoapparat:library-2.3.1">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-2.10-all/caches/transforms-1/files-1.1/library-2.3.1.aar/4b06cc000f84384025667bee6a477dd2/res" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-2.10-all/caches/transforms-1/files-1.1/library-2.3.1.aar/4b06cc000f84384025667bee6a477dd2/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

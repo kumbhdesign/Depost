@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="sign" type="id" />
+    <item name="my_events" type="id" />
+    <item name="action_select" type="id" />
+    <item name="sbSize" type="id" />
+</resources>

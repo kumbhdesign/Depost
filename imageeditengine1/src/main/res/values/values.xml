@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="fonts">
+
+        <item>@string/TheBeautyline_FreeVersion</item>
+        <item>@string/Chapaza</item>
+        <item>@string/Candy_Beans</item>
+        <item>@string/Billabong</item>
+        <item>@string/LearningCurve</item>
+        <item>@string/Eutemia</item>
+        <item>@string/Grinched</item>
+        <item>@string/adorable</item>
+        <item>@string/verdanai</item>
+        <item>@string/tt1018m_</item>
+    </string-array>
+
+    <integer-array name="fontSize">
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>22</item>
+        <item>28</item>
+        <item>32</item>
+        <item>36</item>
+        <item>48</item>
+    </integer-array>
+
+</resources>

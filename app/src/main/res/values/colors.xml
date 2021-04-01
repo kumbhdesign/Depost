@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#880E4F</color>
+    <color name="colorPrimaryDark">#E91E63</color>
+    <color name="colorAccent">#C2185B</color>
+    <color name="cardview1">#eaf9fa</color>
+
+    <color name="actionbar_background">#2BB3C6</color>
+    <color name="black">#ff000000</color>
+    <color name="black_r">#FF129FB3</color>
+    <color name="white">#ffffff</color>
+    <color name="white1">#f8f8f8</color>
+    <color name="view">#D81B60</color>
+
+    <color name="blue_color_picker">#0066FF</color>
+    <color name="brown_color_picker">#AF593E</color>
+    <color name="green_color_picker">#01A368</color>
+    <color name="orange_color_picker">#FF861F</color>
+    <color name="red_color_picker">#ED0A3F</color>
+    <color name="red_orange_color_picker">#FF3F34</color>
+    <color name="sky_blue_color_picker">#76D7EA</color>
+    <color name="violet_color_picker">#8359A3</color>
+    <color name="yellow_color_picker">#FBE870</color>
+    <color name="yellow_green_color_picker">#C5E17A</color>
+    <color name="tool_bg">#151414</color>
+
+    <color name="dot_dark_screen1">#eaf9fa</color>
+    <color name="dot_dark_screen2">#eaf9fa</color>
+    <color name="dot_dark_screen3">#eaf9fa</color>
+
+    <!-- dots active colors -->
+    <color name="dot_light_screen1">#f2f2f2</color>
+    <color name="dot_light_screen2">#f2f2f2</color>
+    <color name="dot_light_screen3">#f2f2f2</color>
+
+    <array name="array_dot_active">
+        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen2</item>
+        <item>@color/dot_light_screen3</item>
+    </array>
+
+    <array name="array_dot_inactive">
+        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen2</item>
+        <item>@color/dot_dark_screen3</item>
+    </array>
+
+    <color name="gray_normal">#ff757575</color>
+    <color name="gray_pressed">#ff616161</color>
+
+</resources>

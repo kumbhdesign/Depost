@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="com.yashoid:instacropper-1.0.6">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-2.10-all/caches/transforms-1/files-1.1/instacropper-1.0.6.aar/06c05939a5bace82e1f26b4f474eba3f/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-2.10-all/caches/transforms-1/files-1.1/instacropper-1.0.6.aar/06c05939a5bace82e1f26b4f474eba3f/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-2.10-all/caches/modules-2/files-2.1/com.yashoid/instacropper/1.0.6/30656d762e89a094fb3a11058d4f13c9bb5ffa64/instacropper-1.0.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
