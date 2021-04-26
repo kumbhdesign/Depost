@@ -3,7 +3,9 @@
     <solid android:color="@android:color/transparent" />
     <stroke
         android:width="2px"
-        android:color="#969696" />
+        android:dashWidth="3dp"
+        android:dashGap="3dp"
+        android:color="#0000A0" />
 
     <padding
         android:bottom="2dp"

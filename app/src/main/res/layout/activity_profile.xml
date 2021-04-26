@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".Activity.Profile">
 
@@ -14,57 +18,399 @@
         android:layout_height="250dp"
         android:background="@drawable/my_profile">
 
-    <ImageView
-        android:id="@+id/back"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:padding="3dp"
-        android:src="@drawable/back"
-        android:clickable="true"
-        android:layout_marginLeft="10dp"/>
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="10dp"
+            android:clickable="true"
+            android:padding="3dp"
+            android:src="@drawable/back" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My Profile"
-        android:textColor="@color/white"
-        android:textSize="20dp"
-        android:gravity="center"
-        android:layout_marginTop="3dp"
-        android:id="@+id/text"/>
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            android:text="My Profile"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
 
     </RelativeLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/my_profilee"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:civ_border_width="2dp"
-        app:civ_border_color="@color/white"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="150dp"
-        android:id="@+id/my_profilee"
-        android:src="@drawable/profile"/>
+        android:src="@drawable/profile"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp" />
 
     <TextView
         android:id="@+id/txt_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/my_profilee"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
         android:text="Nirali Desai"
         android:textColor="@color/black"
         android:textSize="20dp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_below="@id/my_profilee"
-        android:layout_marginTop="12dp"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/pr_mail_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="abc1234@gmail.com"
         android:layout_below="@id/txt_name"
+        android:gravity="center"
+        android:text="abc1234@gmail.com"
         android:textColor="@color/gray_pressed"
-        android:textSize="16dp"
-        android:gravity="center"/>
+        android:textSize="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:id="@+id/li_comapany_name"
+        android:layout_below="@+id/pr_mail_id"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:id="@+id/rel_company"
+            android:orientation="vertical"
+            android:layout_weight="0.88"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/profile_com_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/profile_com_value"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_com_name"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_edit"
+            android:layout_width="22dp"
+            android:layout_height="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/rel_company"
+            android:src="@drawable/edit"
+            android:tint="@color/blue_color_picker" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/rel_company_address"
+        android:weightSum="1"
+        android:layout_below="@+id/li_comapany_name"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:id="@+id/rel_address"
+            android:orientation="vertical"
+            android:layout_weight="0.88"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/profile_com_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Address"
+                android:textColor="@color/gray_pressed"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/profile_com_adress_value"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_com_address"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_edit_address"
+            android:layout_width="22dp"
+            android:layout_height="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/rel_address"
+            android:src="@drawable/edit"
+            android:tint="@color/blue_color_picker" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:id="@+id/rel_comapny_mobile"
+        android:layout_below="@+id/rel_company_address"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:id="@+id/rel_mobile"
+            android:orientation="vertical"
+            android:layout_weight="0.88"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/profile_com_mobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Mobile no"
+                android:textColor="@color/gray_pressed"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/profile_com_mobile_value"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_com_mobile"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_edit_mobile"
+            android:layout_width="22dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/rel_address"
+            android:src="@drawable/edit"
+            android:tint="@color/blue_color_picker" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:visibility="gone"
+        android:id="@+id/rel_comapny_website"
+        android:layout_below="@+id/rel_comapny_mobile"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:id="@+id/rel_website"
+            android:orientation="vertical"
+            android:layout_weight="0.88"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/profile_com_website"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Website url"
+                android:textColor="@color/gray_pressed"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/profile_com_website_value"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_com_mobile"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_edit_website"
+            android:layout_width="22dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/rel_address"
+            android:src="@drawable/edit"
+            android:tint="@color/blue_color_picker" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:visibility="gone"
+        android:id="@+id/rel_comapny_facebook"
+        android:layout_below="@+id/rel_comapny_website"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:id="@+id/rel_facebook"
+            android:orientation="vertical"
+            android:layout_weight="0.88"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/profile_com_facbook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Facebook Id"
+                android:textColor="@color/gray_pressed"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/profile_com_facebook_value"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_com_mobile"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_edit_facebook"
+            android:layout_width="22dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/rel_address"
+            android:src="@drawable/edit"
+            android:tint="@color/blue_color_picker" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="1"
+        android:id="@+id/rel_comapny_twitter"
+        android:layout_below="@+id/rel_comapny_facebook"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:id="@+id/rel_twitter"
+            android:orientation="vertical"
+            android:layout_weight="0.88"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/profile_com_twitter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Linkedin Id"
+                android:textColor="@color/gray_pressed"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/profile_com_twitter_value"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_com_mobile"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_edit_twitter"
+            android:layout_width="22dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/rel_address"
+            android:src="@drawable/edit"
+            android:tint="@color/blue_color_picker" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="1"
+        android:id="@+id/rel_comapny_insta"
+        android:layout_below="@+id/rel_comapny_twitter"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="0.88"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/profile_com_insta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Insta Id"
+                android:textColor="@color/gray_pressed"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/profile_com_insta_value"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_com_mobile"
+                android:text="Company name"
+                android:textColor="@color/gray_pressed"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_edit_insta"
+            android:layout_width="22dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/rel_address"
+            android:src="@drawable/edit"
+            android:tint="@color/blue_color_picker" />
+    </LinearLayout>
 
 </RelativeLayout>
+</ScrollView>

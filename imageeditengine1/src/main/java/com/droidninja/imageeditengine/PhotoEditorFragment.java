@@ -530,7 +530,7 @@ public class PhotoEditorFragment extends BaseFragment implements View.OnClickLis
             Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.watermark_img);
             bitmap1 = mark(bitmap1, "Hello");
 
-           imgshoot.setImageBitmap(bitmap1);
+//           imgshoot.setImageBitmap(bitmap1);
 
 //            String bitmapPath = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), bitmap, "Depost", null);
 //            Uri bitmapUri = Uri.parse(bitmapPath);

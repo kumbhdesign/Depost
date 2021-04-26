@@ -7,6 +7,9 @@
     <string name="Cancel">CANCEL</string>
 
     <string name="TheBeautyline_FreeVersion">fonts/TheBeautyline-FreeVersion.ttf</string>
+    <string name="Montserrat">fonts/Montserrat-Regular.ttf</string>
+    <string name="Roboto">fonts/Roboto-Regular.ttf</string>
+    <string name="OpenSans">fonts/OpenSans-Regular.ttf</string>
     <string name="Chapaza">fonts/Chapaza.ttf</string>
     <string name="Candy_Beans">fonts/Candy Beans.otf</string>
     <string name="Billabong">fonts/Billabong.ttf</string>

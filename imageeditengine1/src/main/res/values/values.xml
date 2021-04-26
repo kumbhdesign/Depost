@@ -3,7 +3,11 @@
     <string-array name="fonts">
 
         <item>@string/TheBeautyline_FreeVersion</item>
+        <item>@string/OpenSans</item>
+        <item>@string/Roboto</item>
         <item>@string/Chapaza</item>
+        <item>@string/Montserrat</item>
+        <item>@string/Montserrat</item>
         <item>@string/Candy_Beans</item>
         <item>@string/Billabong</item>
         <item>@string/LearningCurve</item>
@@ -12,6 +16,7 @@
         <item>@string/adorable</item>
         <item>@string/verdanai</item>
         <item>@string/tt1018m_</item>
+
     </string-array>
 
     <integer-array name="fontSize">

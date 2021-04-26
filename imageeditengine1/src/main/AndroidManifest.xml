@@ -13,6 +13,7 @@
       android:supportsRtl="true">
     <activity
         android:name=".ImageEditActivity"
+        android:screenOrientation="portrait"
         android:theme="@style/LibAppTheme"
         android:windowSoftInputMode="adjustNothing">
     </activity>

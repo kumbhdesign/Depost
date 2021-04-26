@@ -5,7 +5,15 @@ public class UserData {
 	private String country;
 	private String googleId;
 
-     public UserData(String facebookUrl, String companyEmail, String company_logo_path, String websiteUrl, String instagramUrl, String linkedinUrl, String mobileNumber) {
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public UserData(String facebookUrl, String companyEmail, String company_logo_path, String websiteUrl, String instagramUrl, String linkedinUrl, String mobileNumber, String address) {
         this.facebookUrl = facebookUrl;
         this.companyEmail = companyEmail;
         this.company_logo_path = company_logo_path;
@@ -13,6 +21,7 @@ public class UserData {
         this.instagramUrl = instagramUrl;
         this.linkedinUrl = linkedinUrl;
         this.mobileNumber = mobileNumber;
+        this.address=address;
     }
 
     private String loginType;
@@ -30,6 +39,7 @@ public class UserData {
 	private String fbId;
 	private String linkedinUrl;
 	private String mobileNumber;
+	private  String address;
 
 	public String getCompany_logo_path() {
 		return company_logo_path;

@@ -84,13 +84,25 @@
             android:inputType="phone" />
 
         <EditText
+            android:id="@+id/et_address"
+            android:layout_width="match_parent"
+            android:background="@drawable/border_edit"
+            android:padding="8dp"
+            android:layout_margin="10dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/et_mobno"
+            android:layout_marginTop="12dp"
+            android:hint="Address"
+           />
+
+        <EditText
             android:id="@+id/et_website_url"
             android:layout_width="match_parent"
             android:background="@drawable/border_edit"
             android:padding="8dp"
             android:layout_margin="10dp"
             android:layout_height="50dp"
-            android:layout_below="@id/et_mobno"
+            android:layout_below="@id/et_address"
             android:layout_marginTop="12dp"
             android:hint="Websire Url"
             android:inputType="text" />

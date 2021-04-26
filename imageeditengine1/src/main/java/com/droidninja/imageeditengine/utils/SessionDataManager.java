@@ -2,6 +2,7 @@ package com.droidninja.imageeditengine.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class SessionDataManager {
 
@@ -124,6 +125,7 @@ public class SessionDataManager {
 
     public void setUserId(String user_id) {
         editor.putString(USER_ID, user_id);
+        Log.v("userID---->",user_id);
         editor.commit();
     }
 

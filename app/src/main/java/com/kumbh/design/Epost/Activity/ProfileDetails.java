@@ -27,10 +27,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.droidninja.imageeditengine.model.UserData;
 import com.google.gson.JsonObject;
 import com.kumbh.design.Epost.FileUploadService;
 import com.kumbh.design.Epost.R;
@@ -60,7 +64,7 @@ import retrofit2.Callback;
 public class ProfileDetails extends AppCompatActivity {
 
 
-    EditText et_email, et_mob, et_website, et_fb, et_insta, et_link;
+    EditText et_email, et_mob, et_website, et_fb, et_insta, et_link,et_address;
     ImageView img_edit, my_logo, account_back;
     Button bt_submit;
     private boolean valid;
@@ -74,7 +78,9 @@ public class ProfileDetails extends AppCompatActivity {
     String instagram = "";
     String facebook = "";
     String linkedin = "";
+    String comapanyAddress="";
     private String filename;
+    private UserData user;
 
 
     @Override
@@ -83,6 +89,7 @@ public class ProfileDetails extends AppCompatActivity {
         setContentView(R.layout.activity_profile_details);
         et_email = findViewById(R.id.et_email);
         et_fb = findViewById(R.id.et_fb_url);
+        et_address=findViewById(R.id.et_address);
         et_website = findViewById(R.id.et_website_url);
         et_mob = findViewById(R.id.et_mobno);
         et_insta = findViewById(R.id.et_insta_link);
@@ -92,8 +99,14 @@ public class ProfileDetails extends AppCompatActivity {
         my_logo = findViewById(R.id.my_logo);
         account_back = findViewById(R.id.account_back);
         shared_pr = new SessionManager(getApplicationContext());
-
+        getData();
         pb_festival = new ProgressDialog(this);
+        my_logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
+            }
+        });
         bt_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +139,81 @@ public class ProfileDetails extends AppCompatActivity {
         }
         cursor.close();
         return path;
+    }
+    private void getData() {
+        String userId = shared_pr.getUserId();
+
+        //  Log.d("DATA_URL","https://api.qwant.com/api/search/images?count=50&q="+festival+"+backgrounds&t=images&safesearch=1&locale=en_US&uiv=4");
+//        pb_setimage.setVisibility(View.VISIBLE);
+        StringRequest request = new StringRequest(Request.Method.GET, "https://www.kumbhdesign.in/mobile-app/depost/api/profile-update/" + userId, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                try {
+//                    pb_setimage.setVisibility(View.GONE);
+
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject jsonObject1 = jsonObject.getJSONObject("response");
+                    JSONObject jsonObject2 = jsonObject1.getJSONObject("user_data");
+                    int error = jsonObject2.getInt("error");
+                    if (error == 0) {
+
+                        JSONObject userData = jsonObject2.getJSONObject("user");
+                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"), userData.getString("company_address"));
+
+
+
+                    }
+
+                    et_email.setText(user.getCompanyEmail());
+                    et_address.setText(user.getAddress());
+                    et_mob.setText(user.getMobileNumber());
+                    if(user.getWebsiteUrl()!=null)
+                    {
+                        et_website.setText(user.getWebsiteUrl());
+                    }
+                    if(user.getFacebookUrl()!=null)
+
+                    {
+                        et_fb.setText(user.getFacebookUrl());
+                    }
+                    if(user.getInstagramUrl()!=null)
+                    {
+                        et_insta.setText(user.getInstagramUrl());
+                    }
+                    if(user.getLinkedinUrl()!=null)
+                    {
+                        et_link.setText(user.getLinkedinUrl());
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+//                        pb_setimage.setVisibility(View.GONE);
+                        Log.d("Error", error.toString());
+                        Toast.makeText(ProfileDetails.this, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        RequestQueue requestQueue = Volley.newRequestQueue(ProfileDetails.this);
+        requestQueue.add(request);
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -260,6 +348,7 @@ public class ProfileDetails extends AppCompatActivity {
         instagram=et_insta.getText().toString();
         facebook=et_fb.getText().toString();
         linkedin=et_link.getText().toString();
+        comapanyAddress=et_address.getText().toString();
 
         if (et_email.getText().toString().isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(et_email.getText().toString()).matches()) {
             et_email.setError("enter a valid email address");
@@ -267,6 +356,14 @@ public class ProfileDetails extends AppCompatActivity {
         } else if (et_mob.getText().toString().isEmpty() || et_mob.getText().toString().length() != 10) {
             et_mob.setError("Please enter a valid mobile number");
             valid = false;
+        }
+        else if(comapanyAddress == null || comapanyAddress.length() == 0)
+        {
+            et_address.setError("Please enter address");
+        }
+        else if(path == null || path.length() ==0)
+        {
+            Toast.makeText(ProfileDetails.this,"Please select logo image",Toast.LENGTH_LONG).show();
         }
 //        else if (et_website.getText().toString()!=null && et_website.getText().toString().length() > 0) {
 //            websiteUrl = "";
@@ -345,12 +442,13 @@ public class ProfileDetails extends AppCompatActivity {
         RequestBody linkedinRequest = RequestBody.create(MediaType.parse("text/plain"), linkedin);
         RequestBody instadRequest = RequestBody.create(MediaType.parse("text/plain"), instagram);
         RequestBody logohidden = RequestBody.create(MediaType.parse("text/plain"), filename);
+        RequestBody companyAddress = RequestBody.create(MediaType.parse("text/plain"), comapanyAddress);
 
         String userId=shared_pr.getUserId();
 
 
         // finally, execute the request
-        Call<ResponseBody> call = service.upload(userId,body, shared_pr.getUserId(), emailRequest, mobileRequest,websiteRequest,facebookdRequest,instadRequest,linkedinRequest,logohidden);
+        Call<ResponseBody> call = service.upload(userId,body, shared_pr.getUserId(), emailRequest, mobileRequest,websiteRequest,facebookdRequest,instadRequest,linkedinRequest,logohidden,companyAddress);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {

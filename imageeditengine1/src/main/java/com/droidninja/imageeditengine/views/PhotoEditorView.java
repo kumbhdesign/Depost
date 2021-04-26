@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +14,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,13 +29,13 @@ import com.android.volley.toolbox.Volley;
 import com.droidninja.imageeditengine.PhotoEditorFragment;
 import com.droidninja.imageeditengine.R;
 import com.droidninja.imageeditengine.brush.ColorPicker;
+import com.droidninja.imageeditengine.model.UserData;
 import com.droidninja.imageeditengine.utils.KeyboardHeightProvider;
 import com.droidninja.imageeditengine.utils.MultiTouchListener;
 import com.droidninja.imageeditengine.utils.Utility;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import static com.droidninja.imageeditengine.PhotoEditorFragment.MODE_ADD_TEXT;
 import static com.droidninja.imageeditengine.PhotoEditorFragment.MODE_NONE;
@@ -49,7 +48,7 @@ import static com.droidninja.imageeditengine.PhotoEditorFragment.share;
 import static com.droidninja.imageeditengine.PhotoEditorFragment.stickerButton;
 
 public class PhotoEditorView extends FrameLayout implements ViewTouchListener, KeyboardHeightProvider.KeyboardHeightObserver {
-    public static  RelativeLayout container;
+    public static RelativeLayout container;
     public static RecyclerView recyclerView;
     private int currentFont = 0;
     CustomPaintView customPaintView;
@@ -76,6 +75,9 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
     public static LottieAnimationView animationView;
     public static FrameLayout layout;
     String[] fonts;
+
+    public static ProgressBar progressBar;
+
     private Typeface typeface;
     ImageView imageButtonFontChanges, imageButtonAlignmentChanges, image_font;
     ArrayList<String> sticker;
@@ -113,7 +115,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
         color_picker = view.findViewById(R.id.color_picker);
         add_text_done_tv = view.findViewById(R.id.add_text_done_tv);
         fonts = getResources().getStringArray(R.array.fonts);
-
+        progressBar=view.findViewById(R.id.progressBar);
         layout = view.findViewById(R.id.layout);
         animation_view = view.findViewById(R.id.animation_view);
         container = view.findViewById(R.id.container);
@@ -195,12 +197,9 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
                         inputTextET.setTypeface(typeface);
 
 
-                        if(selectTextId == 1)
-                        {
+                        if (selectTextId == 1) {
                             txtText.setTypeface(typeface);
-                        }
-                        else if(selectTextId == 2)
-                        {
+                        } else if (selectTextId == 2) {
                             tvemail.setTypeface(typeface);
                         }
                         Log.d("FontInfo", path);
@@ -214,14 +213,11 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
             @Override
             public void onClick(View view) {
                 inputTextET.setTypeface(typeface, Typeface.BOLD);
-              if(selectTextId == 1)
-              {
-                  txtText.setTypeface(typeface, Typeface.BOLD);
-              }
-              else if(selectTextId == 2)
-              {
-                  tvemail.setTypeface(typeface, Typeface.BOLD);
-              }
+                if (selectTextId == 1) {
+                    txtText.setTypeface(typeface, Typeface.BOLD);
+                } else if (selectTextId == 2) {
+                    tvemail.setTypeface(typeface, Typeface.BOLD);
+                }
             }
         });
 
@@ -293,303 +289,24 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
         });
         addView(view);
     }
-  public void changeAlignment(View view) {
-    int alignment = txtText.getTextAlignment();
+
+    public void changeAlignment(View view) {
+        int alignment = txtText.getTextAlignment();
 //    container.setGravity(Gravity.CENTER | Gravity.BOTTOM);
 
-      FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-      layoutParams.gravity=Gravity.LEFT;
-      txtText.setLayoutParams(layoutParams);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.LEFT;
+        txtText.setLayoutParams(layoutParams);
 
-
-//    txtText.setGravity(Gravity.CENTER | Gravity.BOTTOM);
-
-//    if (alignment == View.TEXT_ALIGNMENT_CENTER) {
-//      inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-//      txtText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-//      inputTextET.setGravity(Gravity.RIGHT);
-//      inputTextET.setGravity(Gravity.CENTER_VERTICAL);
-//        txtText.setGravity(Gravity.RIGHT);
-//        txtText.setGravity(Gravity.CENTER_VERTICAL);
-//      imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-//    } else if(alignment == View.TEXT_ALIGNMENT_TEXT_END) {
-//      inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-//      inputTextET.setGravity(Gravity.LEFT);
-//      inputTextET.setGravity(Gravity.CENTER_VERTICAL);
-//        txtText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-//        txtText.setGravity(Gravity.LEFT);
-//        txtText.setGravity(Gravity.CENTER_VERTICAL);
-//      imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
-//    }else if(alignment == View.TEXT_ALIGNMENT_TEXT_START) {
-//      inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//      imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//      inputTextET.setGravity(Gravity.CENTER);
-//    }
-  }
-//    public void changeAlignment(View view) {
-//        int alignment = inputTextET.getTextAlignment();
-//        int textAlignment = txtText.getGravity();
-//        int emailAlignment = tvemail.getGravity();
-//
-//
-////    if(selectTextId == 1)
-////    {
-////        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-////        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-////        txtText.setLayoutParams(layoutParams);
-////        imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-////
-////    }
-////    else {
-////        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-////        layoutParams.gravity=Gravity.CENTER;
-////        tvemail.setLayoutParams(layoutParams);
-////        imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-////    }
-//
-//
-////        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-////                layoutParams.gravity=Gravity.RIGHT;
-////                txtText.setLayoutParams(layoutParams);
-////        tvemail.setLayoutParams(layoutParams);
-//
-//        if (selectTextId == 1) {
-//
-//            if ( textAlignment ==  8388659) {
-//                if (selectTextId == 1) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    txtText.setGravity(80);
-//
-//                    txtText.setLayoutParams(layoutParams);
-//
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=2;
-//
-//                    tvemail.setLayoutParams(layoutParams);
-//
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-//                } else {
-//                    inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-//                    inputTextET.setGravity(Gravity.RIGHT);
-//                    inputTextET.setGravity(Gravity.CENTER_VERTICAL);
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-//                }
-//
-//            } else if (textAlignment == 80 ) {
-//
-//                if (selectTextId == 1) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=Gravity.CENTER;
-//
-//                    txtText.setGravity(17);
-//                    txtText.setTextAlignment(1);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=Gravity.START;
-//
-//                    tvemail.setLayoutParams(layoutParams);
-//                    tvemail.setTextAlignment(1);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
-//                } else {
-//                    inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-//                    inputTextET.setGravity(Gravity.LEFT);
-//                    inputTextET.setGravity(Gravity.CENTER_VERTICAL);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
-//                }
-//
-//            } else if ( textAlignment == 17 ) {
-//                if (selectTextId == 1) {
-////                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-////                    layoutParams.gravity=Gravity.LEFT;
-////                    txtText.setLayoutParams(layoutParams);
-//                    txtText.setGravity(3);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity= 4;
-//                    tvemail.setLayoutParams(layoutParams);
-//                    tvemail.setTextAlignment(4);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else {
-//                    inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                    inputTextET.setGravity(Gravity.CENTER);
-//                }
-//
-//
-//            }
-//            else if (textAlignment == 3 ) {
-//                if (selectTextId == 1) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=Gravity.RIGHT;
-//                    txtText.setLayoutParams(layoutParams);
-//                    txtText.setGravity(5);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=3;
-//                    tvemail.setTextAlignment(3);
-//                    tvemail.setGravity(3);
-//                    tvemail.setTextAlignment(3);
-//                    tvemail.setLayoutParams(layoutParams);
-//
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else {
-//                    txtText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                    txtText.setGravity(Gravity.CENTER);
-//                }
-//
-//
-//            }
-//
-//
-//        }
-//        else  if(selectTextId == 2)
-//        {
-//
-//            if (emailAlignment == 8388659) {
-//                if (selectTextId == 1) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=2;
-//                    txtText.setTextAlignment(2);
-//                    txtText.setLayoutParams(layoutParams);
-//
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=Gravity.CENTER;
-//
-//                    tvemail.setLayoutParams(layoutParams);
-//
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-//                } else {
-//                    inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-//                    inputTextET.setGravity(Gravity.RIGHT);
-//                    inputTextET.setGravity(Gravity.CENTER_VERTICAL);
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
-//                }
-//
-//            } else if (emailAlignment == 2) {
-//
-//                if (selectTextId == 1) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=1;
-//
-//                    txtText.setLayoutParams(layoutParams);
-//                    txtText.setTextAlignment(1);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=1;
-//
-//                    tvemail.setLayoutParams(layoutParams);
-//                    tvemail.setTextAlignment(1);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
-//                } else {
-//                    inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-//                    inputTextET.setGravity(Gravity.LEFT);
-//                    inputTextET.setGravity(Gravity.CENTER_VERTICAL);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
-//                }
-//
-//            } else if ( emailAlignment == 3) {
-//                if (selectTextId == 1) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=4;
-//                    txtText.setLayoutParams(layoutParams);
-//                    txtText.setTextAlignment(4);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity= 4;
-//                    tvemail.setLayoutParams(layoutParams);
-//                    tvemail.setTextAlignment(4);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else {
-//                    inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                    inputTextET.setGravity(Gravity.CENTER);
-//                }
-//
-//
-//            }
-//            else if (emailAlignment == 4) {
-//                if (selectTextId == 1) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=3;
-//                    txtText.setLayoutParams(layoutParams);
-//                    txtText.setTextAlignment(3);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else if (selectTextId == 2) {
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-//                    layoutParams.gravity=3;
-//                    tvemail.setTextAlignment(3);
-//                    tvemail.setGravity(3);
-//                    tvemail.setTextAlignment(3);
-//                    tvemail.setLayoutParams(layoutParams);
-//
-//
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                } else {
-//                    txtText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//                    imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
-//                    txtText.setGravity(Gravity.CENTER);
-//                }
-//
-//
-//            }
-//        }
-//
-//
-//
-//
-//    }
-
-    public void addImage(Bitmap desiredImage, String path) {
-
-
-        View rootView = mLayoutInflater.inflate(R.layout.img_layout, null);
-        final ImageView imageView = rootView.findViewById(R.id.imgPhotoEditorImage);
-
-        if (path != null) {
-            Picasso.get().load(path).into(imageView);
-        } else {
-            imageView.setImageBitmap(desiredImage);
-        }
-        Random random = new Random();
-        int randomNumber = random.nextInt(10) + 65;
-        imageView.setPadding(100, 200, 0, 0);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-        MultiTouchListener multiTouchListener = new MultiTouchListener(deleteView, container, this.imageView, true, this, layoutParams);
-        multiTouchListener.setOnMultiTouchListener(new MultiTouchListener.OnMultiTouchListener() {
-            @Override
-            public void
-            onRemoveViewListener(View removedView) {
-                selectTextId = 3;
-                container.removeView(removedView);
-                imageView.setImageDrawable(null);
-
-                selectedView = null;
-            }
-        });
-
-        rootView.setOnTouchListener(multiTouchListener);
-        container.addView(rootView);
 
 
     }
+
+
+
+
+
+
 
 
     public void setColor(int selectedColor) {
@@ -641,7 +358,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
         image_font.setVisibility(VISIBLE);
         imageButtonAlignmentChanges.setVisibility(VISIBLE);
         recyclerView.setVisibility(GONE);
-    containerView.bringToFront();
+        containerView.bringToFront();
         inputTextET.setText(null);
         inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         Utility.showSoftKeyboard((Activity) getContext(), inputTextET);

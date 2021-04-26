@@ -21,6 +21,8 @@ public class ImageEditor {
     public static final String EXTRA_IS_STICKER_MODE = "EXTRA_IS_STICKER_MODE";
     public static final String EXTRA_IS_CROP_MODE = "EXTRA_IS_CROP_MODE";
     public static final String EXTRA_HAS_FILTERS = "EXTRA_HAS_FILTERS";
+    public static final String EXTRA_HAS_POSTID = "EXTRA_HAS_POSTID";
+    public static final String EXTRA_HAS_TEMPLATEID = "EXTRA_HAS_TEMPLATEID";
     public static final String EXTRA_IMAGE_PATH = "EXTRA_IMAGE_PATH";
     public static final String EXTRA_NAME = "FESTIVAL";
 
@@ -87,7 +89,7 @@ public class ImageEditor {
             }
         }
 
-        public void festivalCall(Bitmap b) {
+        public void festivalCall(String b, String postId, String templateId) {
             if (imagePath != null && (new File(imagePath).exists())) {
                 Intent intent = new Intent(context, ImageEditActivity.class);
                 intent.putExtra(ImageEditor.EXTRA_IS_PAINT_MODE, enabledEditorPaint);
@@ -96,25 +98,31 @@ public class ImageEditor {
                 intent.putExtra(ImageEditor.EXTRA_IS_CROP_MODE, enableEditorCrop);
                 intent.putExtra(ImageEditor.EXTRA_HAS_FILTERS, enableFilters);
                 intent.putExtra(ImageEditor.EXTRA_IMAGE_PATH, imagePath);
-                Bundle bundle = new Bundle();
-                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                b.compress(Bitmap.CompressFormat.PNG, 100, bStream);
-                byte[] byteArray = bStream.toByteArray();
-
-                bundle.putByteArray(ImageEditor.EXTRA_IMAGE_PATH, byteArray);
-                bundle.putString(ImageEditor.EXTRA_NAME, "FESTIVAL");
+                intent.putExtra(ImageEditor.EXTRA_HAS_POSTID, postId);
+                intent.putExtra(ImageEditor.EXTRA_HAS_TEMPLATEID, templateId);
+//                Bundle bundle = new Bundle();
+//                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+//                b.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+//                byte[] byteArray = bStream.toByteArray();
+//
+//                bundle.putByteArray(ImageEditor.EXTRA_IMAGE_PATH, byteArray);
+                intent.putExtra(ImageEditor.EXTRA_IMAGE_PATH,b);
+//                bundle.putString(ImageEditor.EXTRA_NAME, "FESTIVAL");
                 context.startActivityForResult(intent, RC_IMAGE_EDITOR);
             } else {
                 Intent intent = new Intent(context, ImageEditActivity.class);
-                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                b.compress(Bitmap.CompressFormat.PNG, 100, bStream);
-                byte[] byteArray = bStream.toByteArray();
+//                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+//                b.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+//                byte[] byteArray = bStream.toByteArray();
                 intent.putExtra(ImageEditor.EXTRA_IS_PAINT_MODE, enabledEditorPaint);
-                intent.putExtra(ImageEditor.EXTRA_IMAGE_PATH, byteArray);
+//                intent.putExtra(ImageEditor.EXTRA_IMAGE_PATH, byteArray);
+                intent.putExtra(ImageEditor.EXTRA_IMAGE_PATH,b);
                 intent.putExtra(ImageEditor.EXTRA_NAME, "FESTIVAL");
                 intent.putExtra(ImageEditor.EXTRA_IS_TEXT_MODE, enabledEditorText);
                 intent.putExtra(ImageEditor.EXTRA_IS_CROP_MODE, enableEditorCrop);
                 intent.putExtra(ImageEditor.EXTRA_HAS_FILTERS, enableFilters);
+                intent.putExtra(ImageEditor.EXTRA_HAS_POSTID, postId);
+                intent.putExtra(ImageEditor.EXTRA_HAS_TEMPLATEID, templateId);
                 context.startActivityForResult(intent, RC_IMAGE_EDITOR);
             }
         }

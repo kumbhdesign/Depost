@@ -39,11 +39,26 @@
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
 
     </RelativeLayout>
 
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleSmallTitle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="80dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/blue_color_picker"
+        android:progressBackgroundTint="@color/blue_color_picker"
+        android:progressDrawable="@drawable/circular"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
@@ -77,6 +92,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="18dp"
         android:layout_marginBottom="8dp"
+        android:visibility="invisible"
         android:src="@drawable/watermark_img" />
 
     <com.droidninja.imageeditengine.brush.ColorPicker

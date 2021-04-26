@@ -6,10 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,8 +19,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -29,15 +31,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -51,17 +58,23 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.droidninja.imageeditengine.brush.ColorPicker;
 import com.droidninja.imageeditengine.brush.DrawableOnTouchView;
+import com.droidninja.imageeditengine.model.ListTemplate;
+import com.droidninja.imageeditengine.model.ResponseTemplates;
 import com.droidninja.imageeditengine.model.UserData;
 import com.droidninja.imageeditengine.utils.MultiTouchListener;
 import com.droidninja.imageeditengine.utils.SessionDataManager;
 import com.droidninja.imageeditengine.views.PhotoEditorView;
 import com.droidninja.imageeditengine.views.ViewTouchListener;
+import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 import static android.view.View.VISIBLE;
 import static com.droidninja.imageeditengine.ImageEditor.Builder.FestivalName;
@@ -71,9 +84,10 @@ import static com.droidninja.imageeditengine.views.PhotoEditorView.container;
 import static com.droidninja.imageeditengine.views.PhotoEditorView.imageView;
 import static com.droidninja.imageeditengine.views.PhotoEditorView.layout;
 import static com.droidninja.imageeditengine.views.PhotoEditorView.mainImageView;
+import static com.droidninja.imageeditengine.views.PhotoEditorView.progressBar;
 import static com.droidninja.imageeditengine.views.PhotoEditorView.recyclerView;
 
-public class PhotoFestivalFragment extends BaseFragment implements View.OnClickListener, ViewTouchListener {
+public class PhotoFestivalFragment extends BaseFragment implements View.OnClickListener, ViewTouchListener, AdapterView.OnItemSelectedListener {
 
     public static ImageView stickerButton;
     public static ImageView addTextButton;
@@ -88,8 +102,8 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     Button doneBtn;
     String[] fonts;
     public ColorPicker color_picker;
-    private TextView txtText;
-    private TextView tvemail;
+    private TextView txtEmail;
+    private TextView tvAddress, tvMobile, tvTagline, tvWebsite;
     private int selectTextId;
     public static ImageView back_iv;
     private Bitmap mainBitmap;
@@ -101,16 +115,20 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     public static final int MODE_STICKER = 3;
     public static final int MODE_SHARE = 4;
     public static final int MODE_BACK_COLOR = 5;
-
+    RecyclerView rvColor;
+    ListTemplate template;
+    ImageView logoImage;
     String TAG = "PhotoEditor_Fragment";
     public static int currentMode;
     private Bitmap originalBitmap;
     private int currentFont = 0;
     int[] textSizes;
-    private View selectedView;
-    private int selectViewIndex;
-    ImageView imageButtonFontChanges, imageButtonAlignmentChanges, image_font, color_icon;
+    View selectedView;
+    int selectViewIndex;
+    ImageView imageButtonFontChanges, imageButtonAlignmentChanges, image_font, color_icon, imageItalic, fbImage, twitter, linkedin;
     float scalediff;
+    SeekBar seekBar1;
+    RelativeLayout relativeLayoutSocial;
     private static final int NONE = 0;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
@@ -122,8 +140,12 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     byte[] byteArray;
     Bitmap bmp;
     SessionDataManager shared_pr;
-    //SessionManager shred_pr;
+    CardView cardView;
+    ImageView imgcloseEmail, imgcloseMob, imgclodetag, imgcloseWebsute, imgcloseAddress, imgcloselogo, imgsocilaLogo;
 
+
+    //SessionManager shred_pr;
+    Spinner spinner;
     // private ImageView imageView;
     private ViewTouchListener viewTouchListener;
 
@@ -134,14 +156,19 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     Float scale = 1f;
     private DrawableOnTouchView drawableOnTouchView;
     private UserData user;
+    String postId;
+    String templateId;
+    int densityData;
 
-    public static PhotoFestivalFragment newInstance(String imagePath) {
+    public static PhotoFestivalFragment newInstance(String imagePath, String postId, String templateId) {
 
 
         Bundle bundle = new Bundle();
 
         PhotoFestivalFragment photoEditorFragment = new PhotoFestivalFragment();
         bundle.putString(ImageEditor.EXTRA_IMAGE_PATH, imagePath);
+        bundle.putString(ImageEditor.EXTRA_HAS_POSTID, postId);
+        bundle.putString(ImageEditor.EXTRA_HAS_TEMPLATEID, templateId);
         photoEditorFragment.setArguments(bundle);
         return photoEditorFragment;
     }
@@ -158,10 +185,42 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_photo_festival, container, false);
+        v.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                color_picker.setVisibility(View.GONE);
+//                cardView.setVisibility(View.INVISIBLE);
+                txtEmail.setBackgroundResource(0);
+                tvAddress.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
+                relativeLayoutSocial.setBackgroundResource(0);
+                logoImage.setBackgroundResource(0);
+                imgclodetag.setVisibility(View.GONE);
+
+                imgcloseEmail.setVisibility(View.GONE);
+
+                imgcloseAddress.setVisibility(View.GONE);
+
+                imgcloseMob.setVisibility(View.GONE);
+
+                imgcloseWebsute.setVisibility(View.GONE);
+
+                imgsocilaLogo.setVisibility(View.GONE);
+
+                imgcloselogo.setVisibility(View.GONE);
+
+
+                return false;
+
+            }
+        });
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
         return v;
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -178,20 +237,22 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     protected void initView(View view) {
 
         addTextButton = view.findViewById(R.id.add_text_btn);
+        seekBar1 = view.findViewById(R.id.seekBar1);
         share = view.findViewById(R.id.share);
+        cardView = view.findViewById(R.id.card);
         deleteButton = view.findViewById(R.id.delete_view);
 //        RecyclerView rvColor = view.findViewById(R.id.rvColors);
         color_picker = view.findViewById(R.id.color_picker1);
         photoEditorView = view.findViewById(R.id.photo_editor_view);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        rvColor = view.findViewById(R.id.rvColor);
+        postId = getArguments().getString(ImageEditor.EXTRA_HAS_POSTID);
+        templateId = getArguments().getString(ImageEditor.EXTRA_HAS_TEMPLATEID);
         //height 1378
         //width 720
-
+        densityData = (int) Math.round(getActivity().getResources().getDisplayMetrics().density);
         int dpValur = (int) Math.round(1200 / getActivity().getResources().getDisplayMetrics().density);
         int width = dpValur;
         int height = dpValur;
-        Toast.makeText(getActivity(), "dp" + width, Toast.LENGTH_LONG).show();
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         photoEditorView.setLayoutParams(layoutParams);
@@ -199,6 +260,8 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 //        photoEditorView.setMinimumWidth(displayMetrics.widthPixels);
         paintButton = view.findViewById(R.id.paint_btn);
         toolbarLayout = view.findViewById(R.id.toolbar_layout);
+        spinner = (Spinner) view.findViewById(R.id.spinner);
+
         back_iv = view.findViewById(R.id.back_iv);
         re_layout = view.findViewById(R.id.re_layout);
         back_color = view.findViewById(R.id.back_color);
@@ -208,15 +271,73 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
         imageButtonFontChanges = view.findViewById(R.id.imageButtonFontChanges1);
         image_font = view.findViewById(R.id.font_bold1);
         imageButtonAlignmentChanges = view.findViewById(R.id.imageButtonAlignmentChanges1);
+        imageItalic = view.findViewById(R.id.imageItalic);
         color_icon = view.findViewById(R.id.color_icon);
         View rootViewText = mLayoutInflater.inflate(R.layout.view_text_layout, null);
         View rootView1Text = mLayoutInflater.inflate(R.layout.view_email_layout, null);
-        txtText = rootViewText.findViewById(R.id.tvPhotoEditorText);
-        tvemail = rootView1Text.findViewById(R.id.tvEmailEditorText);
-        getData();
+        View rootViewMobileText = mLayoutInflater.inflate(R.layout.view_mobile_layout, null);
+        View rootViewTagText = mLayoutInflater.inflate(R.layout.view_tag_layout, null);
+        View rootViewWebsite = mLayoutInflater.inflate(R.layout.view_website_layout, null);
+        txtEmail = rootViewText.findViewById(R.id.tvPhotoEditorText);
+        imgcloseEmail = rootViewText.findViewById(R.id.imgPhotoEditorClose);
+        imgcloseAddress = rootView1Text.findViewById(R.id.imgPhotoEditorClose);
+        imgcloseMob = rootViewMobileText.findViewById(R.id.imgPhotoEditorClose);
+        imgcloseWebsute = rootViewWebsite.findViewById(R.id.imgPhotoEditorClose);
+        imgclodetag = rootViewTagText.findViewById(R.id.imgPhotoEditorClose);
+
+
+        tvAddress = rootView1Text.findViewById(R.id.tvEmailEditorText);
+        tvMobile = rootViewMobileText.findViewById(R.id.tvMobileEditorText);
+        tvTagline = rootViewTagText.findViewById(R.id.tvTagLine);
+        tvWebsite = rootViewWebsite.findViewById(R.id.tvWebsite);
+        View rootView = mLayoutInflater.inflate(R.layout.img_layout, null);
+        logoImage = rootView.findViewById(R.id.imgPhotoEditorImage);
+        View rootViewSocial = mLayoutInflater.inflate(R.layout.social_layout, null);
+        relativeLayoutSocial = rootViewSocial.findViewById(R.id.rl_social);
+        fbImage = rootViewSocial.findViewById(R.id.social_fb);
+        twitter = rootViewSocial.findViewById(R.id.social_twitter);
+        linkedin = rootViewSocial.findViewById(R.id.social_linkedin);
+        imgcloselogo = rootView.findViewById(R.id.imgPhotoEditorClose);
+        imgsocilaLogo = rootViewSocial.findViewById(R.id.imgPhotoEditorClose);
         photoEditorView.setImageView(mainImageView, null, this);
+//        photoEditorView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                container.removeView(view);
+//                return false;
+//            }
+//        });
+        photoEditorView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                txtEmail.setBackgroundResource(0);
+                tvAddress.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                relativeLayoutSocial.setBackgroundResource(0);
+                logoImage.setBackgroundResource(0);
+                imgclodetag.setVisibility(View.GONE);
+
+                imgcloseEmail.setVisibility(View.GONE);
+
+                imgcloseAddress.setVisibility(View.GONE);
+
+                imgcloseMob.setVisibility(View.GONE);
+
+                imgcloseWebsute.setVisibility(View.GONE);
+
+                imgsocilaLogo.setVisibility(View.GONE);
+
+                imgcloselogo.setVisibility(View.GONE);
+
+                return false;
+            }
+        });
         if (getArguments() != null && getActivity() != null && getActivity().getIntent() != null) {
             final String imagePath = getArguments().getString(ImageEditor.EXTRA_IMAGE_PATH);
+            postId = getArguments().getString(ImageEditor.EXTRA_HAS_POSTID);
+            templateId = getArguments().getString(ImageEditor.EXTRA_HAS_TEMPLATEID);
+            getTemplateDetail();
             animationView.setVisibility(VISIBLE);
             Glide.with(this)
                     .asBitmap()
@@ -240,12 +361,51 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                     })
                     .into(mainImageView);
             fonts = getResources().getStringArray(R.array.fonts);
-            Intent intent = getActivity().getIntent();
-//            setVisibility(addTextButton, intent.getBooleanExtra(ImageEditor.EXTRA_IS_TEXT_MODE, false));
-//            setVisibility(paintButton, intent.getBooleanExtra(ImageEditor.EXTRA_IS_PAINT_MODE, false));
+            spinner.setOnItemSelectedListener(this);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                    R.layout.text_spinner, fonts) {
+
+                private View initView(int position, View convertView,
+                                      ViewGroup parent) {
+                    // It is used to set our custom view.
+                    if (convertView == null) {
+                        convertView = LayoutInflater.from(getContext()).inflate(R.layout.text_spinner, parent, false);
+                    }
+
+                    TextView textViewName = convertView.findViewById(R.id.tv_spinner);
+                    Typeface externalFont = Typeface.createFromAsset(getActivity().getAssets(), fonts[position]);
+
+                    textViewName.setTypeface(externalFont);
+                    textViewName.setText(fonts[position]);
+
+                    // It is used the name to the TextView when the
+                    // current item is not null.
+
+                    return convertView;
+                }
+
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    return initView(position, convertView, parent);
+
+                }
 
 
-            mainImageView.setMaxHeight(height - 100);
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    View v = super.getDropDownView(position, convertView, parent);
+
+                    Typeface externalFont = Typeface.createFromAsset(getActivity().getAssets(), fonts[position]);
+                    ((TextView) v).setTypeface(externalFont);
+
+
+                    return v;
+                }
+            };
+
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+
+
+//            mainImageView.setMaxHeight(height - 100);
             addTextButton.setOnClickListener(this);
             paintButton.setOnClickListener(this);
             back_iv.setOnClickListener(this);
@@ -325,10 +485,42 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 
 
         }
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        rvColor.setLayoutManager(layoutManager);
+        rvColor.setHasFixedSize(true);
+        ColorPickerAdapter colorPickerAdapter = new ColorPickerAdapter(getActivity());
+        colorPickerAdapter.setOnColorPickerClickListener(new ColorPickerAdapter.OnColorPickerClickListener() {
+            @Override
+            public void onColorPickerClickListener(int colorCode) {
+                if (selectTextId == 1) {
+                    txtEmail.setTextColor(colorCode);
+                } else if (selectTextId == 2) {
+                    tvAddress.setTextColor(colorCode);
+                } else if (selectTextId == 3) {
+                    tvMobile.setTextColor(colorCode);
+                } else if (selectTextId == 4) {
+                    tvWebsite.setTextColor(colorCode);
+                } else if (selectTextId == 5) {
+                    tvTagline.setTextColor(colorCode);
+                } else if (selectTextId == 6) {
+                    fbImage.setColorFilter(colorCode);
+                    twitter.setColorFilter(colorCode);
+                    linkedin.setColorFilter(colorCode);
+
+                }
+            }
+        });
+        rvColor.setAdapter(colorPickerAdapter);
+
+
         color_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                color_picker.setVisibility(VISIBLE);
+                rvColor.setVisibility(VISIBLE);
+                seekBar1.setVisibility(View.GONE);
+                spinner.setVisibility(View.GONE);
             }
         });
 
@@ -345,9 +537,15 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
             public void onFinishedColorPicking(int color) {
 
                 if (selectTextId == 1) {
-                    txtText.setTextColor(color);
+                    txtEmail.setTextColor(color);
                 } else if (selectTextId == 2) {
-                    tvemail.setTextColor(color);
+                    tvAddress.setTextColor(color);
+                } else if (selectTextId == 3) {
+                    tvMobile.setTextColor(color);
+                } else if (selectTextId == 4) {
+                    tvWebsite.setTextColor(color);
+                } else if (selectTextId == 5) {
+                    tvTagline.setTextColor(color);
                 }
 
             }
@@ -361,19 +559,11 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
             public void onClick(final View view) {
 
 
-                currentFont++;
-                if (currentFont >= fonts.length) currentFont = 0;
-                String path = fonts[currentFont];
-                typeface = Typeface.createFromAsset(getActivity().getAssets(), path);
+                spinner.setVisibility(VISIBLE);
+                seekBar1.setVisibility(View.GONE);
+                rvColor.setVisibility(View.GONE);
 
-
-                if (selectTextId == 1) {
-                    txtText.setTypeface(typeface);
-                } else if (selectTextId == 2) {
-                    tvemail.setTypeface(typeface);
-                }
-                Log.d("FontInfo", path);
-                imageButtonAlignmentChanges.setVisibility(VISIBLE);
+//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
             }
 
 
@@ -383,13 +573,71 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
             @Override
             public void onClick(View view) {
                 if (selectTextId == 1) {
-                    txtText.setTypeface(typeface, Typeface.BOLD);
+                    txtEmail.setTypeface(typeface, Typeface.BOLD);
                 } else if (selectTextId == 2) {
-                    tvemail.setTypeface(typeface, Typeface.BOLD);
+                    tvAddress.setTypeface(typeface, Typeface.BOLD);
+                } else if (selectTextId == 3) {
+                    tvMobile.setTypeface(typeface, Typeface.BOLD);
+                } else if (selectTextId == 4) {
+                    tvWebsite.setTypeface(typeface, Typeface.BOLD);
+                } else if (selectTextId == 5) {
+                    tvTagline.setTypeface(typeface, Typeface.BOLD);
                 }
             }
         });
 
+        imageItalic.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (selectTextId == 1) {
+                    txtEmail.setTypeface(typeface, Typeface.ITALIC);
+                } else if (selectTextId == 2) {
+                    tvAddress.setTypeface(typeface, Typeface.ITALIC);
+                } else if (selectTextId == 3) {
+                    tvMobile.setTypeface(typeface, Typeface.ITALIC);
+                } else if (selectTextId == 4) {
+                    tvWebsite.setTypeface(typeface, Typeface.ITALIC);
+                } else if (selectTextId == 5) {
+                    tvTagline.setTypeface(typeface, Typeface.ITALIC);
+                }
+            }
+        });
+
+        imageButtonAlignmentChanges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                seekBar1.setVisibility(VISIBLE);
+                spinner.setVisibility(View.GONE);
+                rvColor.setVisibility(View.GONE);
+            }
+        });
+        seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (selectTextId == 1) {
+                    txtEmail.setTextSize(i);
+                } else if (selectTextId == 2) {
+                    tvAddress.setTextSize(i);
+                } else if (selectTextId == 3) {
+                    tvMobile.setTextSize(i);
+                } else if (selectTextId == 4) {
+                    tvWebsite.setTextSize(i);
+                } else if (selectTextId == 5) {
+                    tvTagline.setTextSize(i);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
     }
 
@@ -601,7 +849,9 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                 text = "\n\n" + UserName + " Wishing you a Happy" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
             }
             //text = "\n\n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://goo.gl/SU7Xbp";
-
+            txtEmail.setBackgroundResource(0);
+            tvAddress.setBackgroundResource(0);
+            tvMobile.setBackgroundResource(0);
             recyclerView.setVisibility(View.GONE);
             Bitmap bitmap = Bitmap.createBitmap(photoEditorView.getWidth(), photoEditorView.getHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
@@ -647,15 +897,6 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
         }
     }
 
-    public Bitmap mark(Bitmap src, String watermark) {
-        int w = src.getWidth();
-        int h = src.getHeight();
-
-        Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
-        Canvas canvas = new Canvas(result);
-        canvas.drawBitmap(src, 0, 0, null);
-        return result;
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
@@ -675,17 +916,6 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     public void onEditTextChangeListener(View rootView, String text, int colorCode) {
     }
 
-
-    @SuppressLint("ClickableViewAccessibility")
-    public static void visibleView() {
-        paintButton.setVisibility(View.GONE);
-        stickerButton.setVisibility(View.GONE);
-        addTextButton.setVisibility(View.GONE);
-        share.setVisibility(View.GONE);
-        back_iv.setVisibility(View.GONE);
-        back_color.setVisibility(View.GONE);
-        paintButton.setBackground(null);
-    }
 
     private void showSaveDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -713,7 +943,9 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     }
 
     private void getData() {
+        progressBar.setVisibility(VISIBLE);
         String userId = shared_pr.getUserId();
+
         //  Log.d("DATA_URL","https://api.qwant.com/api/search/images?count=50&q="+festival+"+backgrounds&t=images&safesearch=1&locale=en_US&uiv=4");
 //        pb_setimage.setVisibility(View.VISIBLE);
         StringRequest request = new StringRequest(Request.Method.GET, "https://www.kumbhdesign.in/mobile-app/depost/api/profile-update/" + userId, new Response.Listener<String>() {
@@ -721,7 +953,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
             @Override
             public void onResponse(String response) {
                 try {
-//                    pb_setimage.setVisibility(View.GONE);
+//                   pb_setimage.setVisibility(View.GONE);
 
                     JSONObject jsonObject = null;
                     try {
@@ -729,7 +961,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
+                    progressBar.setVisibility(View.GONE);
 
                     JSONObject jsonObject1 = jsonObject.getJSONObject("response");
                     JSONObject jsonObject2 = jsonObject1.getJSONObject("user_data");
@@ -737,19 +969,42 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                     if (error == 0) {
 
                         JSONObject userData = jsonObject2.getJSONObject("user");
-                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"));
-                        Toast.makeText(getActivity(), user.getCompanyEmail(), Toast.LENGTH_LONG);
+                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"), userData.getString("company_address"));
                         Log.v("userData", user.getCompanyEmail());
 
                     }
+                    if (user.getCompany_logo_path() != null && user.getCompany_logo_path().trim().length() > 0) {
+                        addImage(0, user.getCompany_logo_path(), template.getTemplateLogoLeftPadding(), template.getTemplateLogoTopPadding(), densityData);
 
-                    photoEditorView.addImage(null, user.getCompany_logo_path());
-                    setText(user.getCompanyEmail(), 20, 50);
-                    setEmailText(user.getFacebookUrl(), 20, 80);
+                    }
+                    if (user.getCompanyEmail() != null && user.getCompanyEmail().trim().length() > 0) {
+                        setText("Email : " + user.getCompanyEmail(), Integer.parseInt(template.getTemplateEmailLeftPadding()), Integer.parseInt(template.getTemplateEmailTopPadding()));
+
+                    }
+                    if (user.getAddress() != null && user.getAddress().trim().length() > 0) {
+                        setAddressText(user.getAddress());
+                    }
+                    if (user.getMobileNumber() != null && user.getMobileNumber().trim().length() > 0) {
+                        setMobileText("Phone : " + user.getMobileNumber(), Integer.parseInt(template.getTemplateMobileLeftPadding()), Integer.parseInt(template.getTemplateMobileTopPadding()));
+
+                    }
+                    if (user.getWebsiteUrl() != null && user.getWebsiteUrl().trim().length() > 0) {
+                        setWebsiteText(user.getWebsiteUrl(), Integer.parseInt(template.getTemplateMobileLeftPadding()), Integer.parseInt(template.getTemplateMobileTopPadding()));
+
+                    }
+//                    if (template.getTemplateTagline() != null && template.getTemplateTagline().trim().length() > 0) {
+//                        setTagLineText(template.getTemplateTagline(), Integer.parseInt(template.getTemplateMobileLeftPadding()), Integer.parseInt(template.getTemplateMobileTopPadding()));
+//
+//                    }
+
+
+//                    setAddressText(user.getAddress(), Integer.parseInt(template.getTemplateAddressLeftPadding()), Integer.parseInt(template.getTemplateAddressTopPadding()));
+                    addSocailImage(user, template.getTemplateSocialLeftPadding(), template.getTemplateSocialTopPadding(), densityData);
 //                    photoEditorView.addImage(null,user.getCompany_logo_path());
 
 
                 } catch (JSONException e) {
+                    progressBar.setVisibility(View.GONE);
                     e.printStackTrace();
                 }
             }
@@ -757,28 +1012,70 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressBar.setVisibility(View.GONE);
 //                        pb_setimage.setVisibility(View.GONE);
                         Log.d("Error", error.toString());
                         Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
                     }
                 }
         );
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(request);
     }
 
+
+    private void getTemplateDetail() {
+
+        FileUploadService service =
+                ServiceGenerator.createService(FileUploadService.class);
+
+
+        // finally, execute the request
+        Call<ResponseTemplates> call = service.postTemplates(postId, templateId);
+        call.enqueue(new Callback<ResponseTemplates>() {
+            @Override
+            public void onResponse(Call<ResponseTemplates> call, retrofit2.Response<ResponseTemplates> response) {
+                template = response.body().getResponse().getTemplate().getListTemplate();
+                getData();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseTemplates> call, Throwable t) {
+
+            }
+        });
+
+    }
+
     public void setText(String text, int left, int top) {
-        View rootViewText = mLayoutInflater.inflate(R.layout.view_text_layout, null);
+        final View rootViewText = mLayoutInflater.inflate(R.layout.view_text_layout, null);
+
+        Random r = new Random();
+//        int i1 = r.nextInt(8 - 1 + 1) + 1;
+        txtEmail = rootViewText.findViewById(R.id.tvPhotoEditorText);
+        int color = Color.parseColor(template.getTemplateThemeColor());
+        txtEmail.setTextColor(color);
+        imgcloseEmail = rootViewText.findViewById(R.id.imgPhotoEditorClose);
+        imgcloseEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                container.removeView(rootViewText);
+            }
+        });
+//        typeface = Typeface.createFromAsset(getActivity().getAssets(),fonts[i1]);
+//      txtText.setTypeface(typeface);
 
 
-        txtText = rootViewText.findViewById(R.id.tvPhotoEditorText);
-
-//        final FrameLayout frmBorder = rootViewText.findViewById(R.id.frmBorder);
-        txtText.setText(text);
-        txtText.setPadding(left, top, 0, 0);
-        txtText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        txtEmail.setText(text);
+//        txtEmail.setPadding(left/densityData, top/densityData, 0, 0);
+//        txtEmail.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        layoutParams.setMargins(0, 50, 0, 0);
         MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
@@ -787,8 +1084,27 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                 color_icon.setVisibility(VISIBLE);
                 imageButtonFontChanges.setVisibility(VISIBLE);
                 image_font.setVisibility(VISIBLE);
-                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-                selectedView = currentView;
+                txtEmail.setBackgroundResource(R.drawable.rounded_border_tv);
+                tvAddress.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                logoImage.setBackgroundResource(0);
+                relativeLayoutSocial.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                imageItalic.setVisibility(VISIBLE);
+                imgcloseEmail.setVisibility(VISIBLE);
+                cardView.setVisibility(VISIBLE);
+                imgclodetag.setVisibility(View.GONE);
+                imgcloseMob.setVisibility(View.GONE);
+                imgcloseAddress.setVisibility(View.GONE);
+                imgcloselogo.setVisibility(View.GONE);
+
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgcloseWebsute.setVisibility(View.GONE);
+                imgsocilaLogo.setVisibility(View.GONE);
+
+//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
+
                 selectViewIndex = currentView.getId();
             }
 
@@ -799,44 +1115,57 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 
 
         });
-        txtText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                selectTextId = 1;
-                color_icon.setVisibility(VISIBLE);
 
-                imageButtonFontChanges.setVisibility(VISIBLE);
-                image_font.setVisibility(VISIBLE);
-                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-
-                selectedView = view;
-                selectViewIndex = view.getId();
-                return false;
-            }
-        });
 
         rootViewText.setOnTouchListener(multiTouchListener);
         container.addView(rootViewText, layoutParams);
     }
 
-    public void setEmailText(String text, int left, int top) {
-        View rootViewText = mLayoutInflater.inflate(R.layout.view_email_layout, null);
-        tvemail = rootViewText.findViewById(R.id.tvEmailEditorText);
+    public void setAddressText(String text) {
+        final View rootViewText = mLayoutInflater.inflate(R.layout.view_email_layout, null);
+        tvAddress = rootViewText.findViewById(R.id.tvEmailEditorText);
+        imgcloseAddress = rootViewText.findViewById(R.id.imgPhotoEditorClose);
+        imgcloseAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                container.removeView(rootViewText);
+            }
+        });
 //        final FrameLayout frmBorder = rootViewText.findViewById(R.id.frmBorder);
-        tvemail.setText(text);
-        tvemail.setPadding(left, 300, 0, 0);
+        tvAddress.setText(text);
+//        Typeface typefaceData = Typeface.createFromFile(template.getTemplateFontFamilyPath());
+//        tvemail.setTypeface(typefaceData);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.ALIGN_LEFT, RelativeLayout.TRUE);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
         MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
             public void onClick(View currentView) {
                 selectTextId = 2;
-                color_icon.setVisibility(VISIBLE);
+                tvAddress.setBackgroundResource(R.drawable.rounded_border_tv);
+                txtEmail.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                imgcloseAddress.setVisibility(VISIBLE);
 
-                imageButtonFontChanges.setVisibility(VISIBLE);
-                image_font.setVisibility(VISIBLE);
-                imageButtonAlignmentChanges.setVisibility(VISIBLE);
+                imgclodetag.setVisibility(View.GONE);
+                imgcloseMob.setVisibility(View.GONE);
+                imgcloseEmail.setVisibility(View.GONE);
+                imgcloselogo.setVisibility(View.GONE);
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgcloseWebsute.setVisibility(View.GONE);
+                logoImage.setBackgroundResource(0);
+                relativeLayoutSocial.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                cardView.setVisibility(VISIBLE);
+//                color_icon.setVisibility(VISIBLE);
+
+//                imageButtonFontChanges.setVisibility(VISIBLE);
+//                image_font.setVisibility(VISIBLE);
+//                imageItalic.setVisibility(VISIBLE);
+//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
 
                 selectedView = currentView;
                 selectViewIndex = currentView.getId();
@@ -850,25 +1179,411 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 
         });
 
-        tvemail.setOnTouchListener(new View.OnTouchListener() {
+
+        rootViewText.setOnTouchListener(multiTouchListener);
+        container.addView(rootViewText, layoutParams);
+    }
+
+    public void setMobileText(String text, int left, int top) {
+        final View rootViewText = mLayoutInflater.inflate(R.layout.view_mobile_layout, null);
+
+
+        tvMobile = rootViewText.findViewById(R.id.tvMobileEditorText);
+        tvMobile.setText(text);
+        imgcloseMob = rootViewText.findViewById(R.id.imgPhotoEditorClose);
+        if (imgcloseMob != null) {
+            imgcloseMob.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    container.removeView(rootViewText);
+
+
+                }
+            });
+        }
+        int color = Color.parseColor(template.getTemplateThemeColor());
+        tvMobile.setTextColor(color);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        layoutParams.setMargins(0, 100, 0, 0);
+        MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                selectTextId = 2;
-                color_icon.setVisibility(VISIBLE);
+            public void onClick(View currentView) {
+                selectTextId = 3;
+                tvMobile.setBackgroundResource(R.drawable.rounded_border_tv);
+                tvAddress.setBackgroundResource(0);
+                txtEmail.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                logoImage.setBackgroundResource(0);
+                relativeLayoutSocial.setBackgroundResource(0);
+                cardView.setVisibility(VISIBLE);
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgcloseMob.setVisibility(VISIBLE);
 
-                imageButtonFontChanges.setVisibility(VISIBLE);
-                image_font.setVisibility(VISIBLE);
-                imageButtonAlignmentChanges.setVisibility(VISIBLE);
+                imgclodetag.setVisibility(View.GONE);
+                imgcloseAddress.setVisibility(View.GONE);
+                imgcloseEmail.setVisibility(View.GONE);
+                imgcloselogo.setVisibility(View.GONE);
 
-                selectedView = view;
-                selectViewIndex = view.getId();
-                return false;
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgcloseWebsute.setVisibility(View.GONE);
+
+
+//                color_icon.setVisibility(VISIBLE);
+
+//                imageButtonFontChanges.setVisibility(VISIBLE);
+//                image_font.setVisibility(VISIBLE);
+//                imageItalic.setVisibility(VISIBLE);
+//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
+
+                selectedView = currentView;
+                selectViewIndex = currentView.getId();
+            }
+
+            @Override
+            public void onLongClick() {
+
+            }
+
+
+        });
+
+
+        rootViewText.setOnTouchListener(multiTouchListener);
+        container.addView(rootViewText, layoutParams);
+    }
+
+    public void setWebsiteText(String text, int left, int top) {
+        final View rootViewText = mLayoutInflater.inflate(R.layout.view_website_layout, null);
+
+
+        tvWebsite = rootViewText.findViewById(R.id.tvWebsite);
+        tvWebsite.setText(text);
+        imgcloseWebsute = rootViewText.findViewById(R.id.imgPhotoEditorClose);
+        if (imgcloseWebsute != null) {
+            imgcloseWebsute.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    container.removeView(rootViewText);
+
+
+                }
+            });
+        }
+        int color = Color.parseColor(template.getTemplateThemeColor());
+        tvWebsite.setTextColor(color);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
+            @Override
+            public void onClick(View currentView) {
+                selectTextId = 4;
+                tvWebsite.setBackgroundResource(R.drawable.rounded_border_tv);
+                tvAddress.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
+                txtEmail.setBackgroundResource(0);
+                logoImage.setBackgroundResource(0);
+                cardView.setVisibility(VISIBLE);
+                relativeLayoutSocial.setBackgroundResource(0);
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgclodetag.setVisibility(View.GONE);
+                imgcloseAddress.setVisibility(View.GONE);
+                imgcloseEmail.setVisibility(View.GONE);
+                imgcloseMob.setVisibility(View.GONE);
+                imgcloselogo.setVisibility(View.GONE);
+
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgcloseWebsute.setVisibility(VISIBLE);
+
+//                color_icon.setVisibility(VISIBLE);
+
+//                imageButtonFontChanges.setVisibility(VISIBLE);
+//                image_font.setVisibility(VISIBLE);
+//                imageItalic.setVisibility(VISIBLE);
+//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
+
+                selectedView = currentView;
+                selectViewIndex = currentView.getId();
+            }
+
+            @Override
+            public void onLongClick() {
+
+            }
+
+
+        });
+
+
+        rootViewText.setOnTouchListener(multiTouchListener);
+        container.addView(rootViewText, layoutParams);
+    }
+
+    public void setTagLineText(String text, int left, int top) {
+        final View rootViewText = mLayoutInflater.inflate(R.layout.view_tag_layout, null);
+
+
+        tvTagline = rootViewText.findViewById(R.id.tvTagLine);
+        tvTagline.setText(text);
+        imgclodetag = rootViewText.findViewById(R.id.imgPhotoEditorClose);
+        imgclodetag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                container.removeView(rootViewText);
             }
         });
 
+        int color = Color.parseColor(template.getTemplateThemeColor());
+        tvTagline.setTextColor(color);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        layoutParams.setMargins(0, 100, 0, 0);
+        MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
+            @Override
+            public void onClick(View currentView) {
+                selectTextId = 5;
+                tvTagline.setBackgroundResource(R.drawable.rounded_border_tv);
+                tvAddress.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                logoImage.setBackgroundResource(0);
+                txtEmail.setBackgroundResource(0);
+                relativeLayoutSocial.setBackgroundResource(0);
+                cardView.setVisibility(VISIBLE);
+
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgclodetag.setVisibility(VISIBLE);
+                imgcloseAddress.setVisibility(View.GONE);
+                imgcloseEmail.setVisibility(View.GONE);
+                imgcloseMob.setVisibility(View.GONE);
+
+
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgcloseWebsute.setVisibility(View.GONE);
+
+
+//                color_icon.setVisibility(VISIBLE);
+
+//                imageButtonFontChanges.setVisibility(VISIBLE);
+//                image_font.setVisibility(VISIBLE);
+//                imageItalic.setVisibility(VISIBLE);
+//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
+
+                selectedView = currentView;
+                selectViewIndex = currentView.getId();
+            }
+
+            @Override
+            public void onLongClick() {
+
+            }
+
+
+        });
+
+
         rootViewText.setOnTouchListener(multiTouchListener);
-        container.addView(rootViewText);
+        container.addView(rootViewText, layoutParams);
+    }
+
+    public void addImage(int desiredImage, String path, String templateLogoLeftPadding, String templateLogoTopPadding, int densityData) {
+
+
+        final View rootView = mLayoutInflater.inflate(R.layout.img_layout, null);
+        logoImage = rootView.findViewById(R.id.imgPhotoEditorImage);
+
+        if (path != null) {
+            Picasso.get().load(path).into(logoImage);
+        } else {
+            logoImage.setImageResource(desiredImage);
+        }
+        imgcloselogo = rootView.findViewById(R.id.imgPhotoEditorClose);
+        imgcloselogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                container.removeView(rootView);
+            }
+        });
+
+//        imageView.setPadding(Integer.parseInt(templateLogoLeftPadding) / densityData, Integer.parseInt(templateLogoTopPadding) / densityData, 0, 0);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
+        multiTouchListener.setOnMultiTouchListener(new MultiTouchListener.OnMultiTouchListener() {
+            @Override
+            public void
+            onRemoveViewListener(View removedView) {
+                selectTextId = 3;
+                container.removeView(removedView);
+                logoImage.setImageDrawable(null);
+
+                selectedView = null;
+            }
+        });
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
+            @Override
+            public void onClick(View currentView) {
+
+                selectTextId = 0;
+                logoImage.setBackgroundResource(R.drawable.rounded_border_tv);
+                txtEmail.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                tvAddress.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
+                relativeLayoutSocial.setBackgroundResource(0);
+
+
+                imgcloseEmail.setVisibility(View.GONE);
+
+                imgclodetag.setVisibility(View.GONE);
+                imgcloseMob.setVisibility(View.GONE);
+                imgcloseAddress.setVisibility(View.GONE);
+                imgcloselogo.setVisibility(View.GONE);
+
+                imgcloselogo.setVisibility(VISIBLE);
+                imgcloseWebsute.setVisibility(View.GONE);
+
+                imgsocilaLogo.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onLongClick() {
+
+            }
+
+
+        });
+        rootView.setOnTouchListener(multiTouchListener);
+        container.addView(rootView);
+
+
+    }
+
+    public void addSocailImage(UserData user, String templateLogoLeftPadding, String templateLogoTopPadding, int densityData) {
+
+
+        final View rootView = mLayoutInflater.inflate(R.layout.social_layout, null);
+        relativeLayoutSocial = rootView.findViewById(R.id.rl_social);
+        fbImage = rootView.findViewById(R.id.social_fb);
+        linkedin = rootView.findViewById(R.id.social_linkedin);
+        twitter = rootView.findViewById(R.id.social_twitter);
+        imgsocilaLogo = rootView.findViewById(R.id.imgPhotoEditorClose);
+        imgsocilaLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                container.removeView(rootView);
+            }
+        });
+
+        if (user.getFacebookUrl() != null && user.getFacebookUrl().trim().length() > 0) {
+
+            fbImage.setVisibility(VISIBLE);
+        }
+
+        if (user.getLinkedinUrl() != null && user.getLinkedinUrl().trim().length() > 0) {
+            linkedin = rootView.findViewById(R.id.social_linkedin);
+            linkedin.setVisibility(VISIBLE);
+        }
+        if (user.getInstagramUrl() != null && user.getInstagramUrl().trim().length() > 0) {
+            twitter = rootView.findViewById(R.id.social_twitter);
+            twitter.setVisibility(VISIBLE);
+        }
+
+//        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(40, 40);
+//        layoutParams.gravity=Gravity.BOTTOM;
+//        fbImag.setLayoutParams(layoutParams);
+        RelativeLayout.LayoutParams layoutParam2s = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        fbImage.getLayoutParams().height = 40;
+        fbImage.getLayoutParams().width = 40;
+        linkedin.getLayoutParams().height = 40;
+        linkedin.getLayoutParams().width = 40;
+        twitter.getLayoutParams().height = 40;
+        twitter.getLayoutParams().width = 40;
+
+        layoutParam2s.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        layoutParam2s.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParam2s);
+
+        multiTouchListener.setOnMultiTouchListener(new MultiTouchListener.OnMultiTouchListener() {
+            @Override
+            public void
+            onRemoveViewListener(View removedView) {
+//                selectTextId = 3;
+
+                container.removeView(removedView);
+                imageView.setImageDrawable(null);
+
+                selectedView = null;
+            }
+        });
+        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
+            @Override
+            public void onClick(View currentView) {
+                selectTextId = 6;
+                relativeLayoutSocial.setBackgroundResource(R.drawable.rounded_border_tv);
+                txtEmail.setBackgroundResource(0);
+                tvMobile.setBackgroundResource(0);
+                tvAddress.setBackgroundResource(0);
+                tvWebsite.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
+                logoImage.setBackgroundResource(0);
+
+                imgsocilaLogo.setVisibility(View.GONE);
+                imgclodetag.setVisibility(View.GONE);
+                imgcloseAddress.setVisibility(View.GONE);
+                imgcloseEmail.setVisibility(View.GONE);
+                imgcloseMob.setVisibility(View.GONE);
+
+
+                imgsocilaLogo.setVisibility(VISIBLE);
+                imgcloseWebsute.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onLongClick() {
+
+            }
+        });
+
+        rootView.setOnTouchListener(multiTouchListener);
+        container.addView(rootView, layoutParam2s);
+
+
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        Typeface externalFont = Typeface.createFromAsset(getActivity().getAssets(), adapterView.getItemAtPosition(i).toString());
+        if (selectTextId == 1) {
+            txtEmail.setTypeface(externalFont);
+        } else if (selectTextId == 2) {
+            tvAddress.setTypeface(externalFont);
+        } else if (selectTextId == 3) {
+            tvMobile.setTypeface(externalFont);
+        } else if (selectTextId == 4) {
+            tvWebsite.setTypeface(externalFont);
+        } else if (selectTextId == 5) {
+            tvTagline.setTypeface(externalFont);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 
 
 }
+
+
+
+

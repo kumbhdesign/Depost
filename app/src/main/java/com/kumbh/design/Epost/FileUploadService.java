@@ -1,11 +1,15 @@
 package com.kumbh.design.Epost;
 
+import com.kumbh.design.Epost.model.ResponseTemplate;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -24,6 +28,10 @@ public interface FileUploadService {
             @Part("facebook_url") RequestBody  facebookUrl,
             @Part("instagram_url") RequestBody  instagramUrl,
             @Part("linkedin_url") RequestBody  linkedinUrl,
-            @Part("company_logo_hidden") RequestBody logo_hidden
+            @Part("company_logo_hidden") RequestBody logo_hidden,
+            @Part("company_address") RequestBody company_address
     );
+
+    @GET("post-template/{postID}/{templateId}") // specify the sub url for our base url
+    public void postTemplates(@Path(value = "postID", encoded = true)String postId, @Path(value = "templateId", encoded = true)String templateID, Callback<ResponseTemplate> callback);
 }

@@ -1,9 +1,9 @@
 package com.kumbh.design.Epost.model;
 
 public class ResponseFestivalImageByID{
-	private Response response;
+	private ResponseTemplate response;
 
-	public Response getResponse(){
+	public ResponseTemplate getResponse(){
 		return response;
 	}
 }

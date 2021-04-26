@@ -32,7 +32,13 @@ import com.droidninja.imageeditengine.views.ViewTouchListener;
   private ImageView photoEditImageView;
   private RelativeLayout parentView;
 
-  private OnMultiTouchListener onMultiTouchListener;
+    public MultiTouchListener(ViewTouchListener viewTouchListener) {
+      mGestureListener = new GestureDetector(new GestureListener());
+      mScaleGestureDetector = new ScaleGestureDetector(new ScaleGestureListener());
+      this.viewTouchListener = viewTouchListener;
+    }
+
+    private OnMultiTouchListener onMultiTouchListener;
   private OnGestureControl mOnGestureControl;
   private boolean mIsTextPinchZoomable;
   private View currentView;

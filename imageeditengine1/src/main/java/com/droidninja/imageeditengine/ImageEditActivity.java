@@ -14,6 +14,8 @@ import com.droidninja.imageeditengine.utils.FragmentUtil;
 
 import java.util.Calendar;
 
+import static com.droidninja.imageeditengine.ImageEditor.EXTRA_HAS_POSTID;
+import static com.droidninja.imageeditengine.ImageEditor.EXTRA_HAS_TEMPLATEID;
 import static com.droidninja.imageeditengine.ImageEditor.EXTRA_IMAGE_PATH;
 import static com.droidninja.imageeditengine.ImageEditor.EXTRA_NAME;
 
@@ -33,13 +35,15 @@ public class ImageEditActivity extends BaseImageEditActivity {
 
         String name = getIntent().getStringExtra(EXTRA_NAME);
         if (name != null && name.compareTo("FESTIVAL") == 0) {
-         byteArray = getIntent().getByteArrayExtra(ImageEditor.EXTRA_IMAGE_PATH);
-         bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//         byteArray = getIntent().getByteArrayExtra(ImageEditor.EXTRA_IMAGE_PATH);
+//         bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            String postid = getIntent().getStringExtra(EXTRA_HAS_POSTID);
+            String templateID = getIntent().getStringExtra(EXTRA_HAS_TEMPLATEID);
+            String imagePath=getIntent().getStringExtra(EXTRA_IMAGE_PATH);
 
-
-            String path = MediaStore.Images.Media.insertImage(getContentResolver(), bmp, "IMG_" + Calendar.getInstance().getTime().getSeconds(), null);
+//            String path = MediaStore.Images.Media.insertImage(getContentResolver(), bmp, "IMG_" + Calendar.getInstance().getTime().getSeconds(), null);
             FragmentUtil.addFragment(this, R.id.fragment_container,
-                    PhotoFestivalFragment.newInstance(path));
+                    PhotoFestivalFragment.newInstance(imagePath,postid,templateID));
         }
         else{
              imagePath = getIntent().getStringExtra(EXTRA_IMAGE_PATH);

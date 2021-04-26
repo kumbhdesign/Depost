@@ -51,6 +51,7 @@ import com.kumbh.design.Epost.Adapter.Festival_Adapter;
 import com.kumbh.design.Epost.R;
 import com.kumbh.design.Epost.model.ListPostItem;
 import com.kumbh.design.Epost.model.ListPostItemFestival;
+import com.kumbh.design.Epost.model.ListTemplateItem;
 import com.kumbh.design.Epost.util.SessionManager;
 import com.squareup.picasso.Picasso;
 
@@ -90,7 +91,10 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
     Bitmap b;
     Uri imageUri;
     InterstitialAd mInterstitialAd;
-    final List<ListPostItemFestival> list = new ArrayList<>();
+    final List<ListTemplateItem> list = new ArrayList<>();
+
+     String responseData;
+
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -204,6 +208,7 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
             }
         });
         getData();
+
         back_color1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -279,15 +284,16 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
     }
 
     private void getData() {
-        Log.v("image id",id);
+        Log.v("image id", id);
         //  Log.d("DATA_URL","https://api.qwant.com/api/search/images?count=50&q="+festival+"+backgrounds&t=images&safesearch=1&locale=en_US&uiv=4");
         pb_setimage.setVisibility(View.VISIBLE);
-        StringRequest request = new StringRequest(Request.Method.GET, " https://www.kumbhdesign.in/mobile-app/depost/api/allpost/"+id, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "https://www.kumbhdesign.in/mobile-app/depost/api/post-template/" + id, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
+
                 try {
-                    pb_setimage.setVisibility(View.GONE);
+                    responseData=response;
 
                     JSONObject jsonObject = null;
                     try {
@@ -297,31 +303,41 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
                     }
 
 
+                    pb_setimage.setVisibility(View.GONE);
                     JSONObject jsonObject1 = jsonObject.getJSONObject("response");
-                    JSONObject jsonObject2 = jsonObject1.getJSONObject("post");
+                    JSONObject jsonObject2 = jsonObject1.getJSONObject("template");
 
-                    JSONArray jsonArray = jsonObject2.getJSONArray("list_post");
+                   int error = jsonObject2.getInt("error");
+                   if(error == 1)
+                   {
+                       Toast.makeText(SetFestivalImagesActivity.this,"There is no data found",Toast.LENGTH_LONG).show();
+                   }
+                   else{
+                       JSONArray jsonArray = jsonObject2.getJSONArray("list_template");
 
 
-                    if (jsonArray != null && jsonArray.length() > 0) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object1 = jsonArray.getJSONObject(i);
-                            list.add(new ListPostItemFestival(object1.getString("background_img_path"),object1.getString("background_id")));
-                        }
-                        gridView.addItemDecoration(new DividerItemDecoration(SetFestivalImagesActivity.this,
-                                DividerItemDecoration.HORIZONTAL));
-                        gridView.addItemDecoration(new DividerItemDecoration(SetFestivalImagesActivity.this,
-                                DividerItemDecoration.VERTICAL));
-                        gridView.setLayoutManager(new GridLayoutManager(SetFestivalImagesActivity.this, 2));
-                        FestivalImageAdapter adapter = new FestivalImageAdapter(SetFestivalImagesActivity.this, list,"" ,id);
-                        gridView.setAdapter(adapter);
-                        gridView.setVisibility(View.VISIBLE);
+                       if (jsonArray != null && jsonArray.length() > 0) {
+                           for (int i = 0; i < jsonArray.length(); i++) {
+                               JSONObject object1 = jsonArray.getJSONObject(i);
+                               list.add(new ListTemplateItem(object1.getString("post_id"), object1.getString("template_title"), object1.getString("template_id"), object1.getString("template_demo_image_path"), object1.getString("template_image_path")));
+                           }
+                           gridView.addItemDecoration(new DividerItemDecoration(SetFestivalImagesActivity.this,
+                                   DividerItemDecoration.HORIZONTAL));
+                           gridView.addItemDecoration(new DividerItemDecoration(SetFestivalImagesActivity.this,
+                                   DividerItemDecoration.VERTICAL));
+                           gridView.setLayoutManager(new GridLayoutManager(SetFestivalImagesActivity.this, 2));
+                           FestivalImageAdapter adapter = new FestivalImageAdapter(SetFestivalImagesActivity.this, list, "", id);
+                           gridView.setAdapter(adapter);
+                           gridView.setVisibility(View.VISIBLE);
 //                        include.setVisibility(View.GONE);
-                    } else {
-                        gridView.setVisibility(View.GONE);
-//                        include.setVisibility(View.VISIBLE);
+                       } else {
+                           gridView.setVisibility(View.GONE);
+                           Toast.makeText(SetFestivalImagesActivity.this,"There is no data found",Toast.LENGTH_LONG).show();
 
-                    }
+                       }
+                   }
+
+
 
 
                 } catch (JSONException e) {

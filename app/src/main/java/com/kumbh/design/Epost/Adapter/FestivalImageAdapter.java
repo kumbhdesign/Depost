@@ -19,6 +19,7 @@ import com.droidninja.imageeditengine.ImageEditor;
 import com.droidninja.imageeditengine.views.PhotoEditorView;
 import com.kumbh.design.Epost.R;
 import com.kumbh.design.Epost.model.ListPostItemFestival;
+import com.kumbh.design.Epost.model.ListTemplateItem;
 import com.kumbh.design.Epost.util.SessionManager;
 import com.squareup.picasso.Picasso;
 
@@ -28,11 +29,11 @@ import java.util.List;
 public class FestivalImageAdapter extends RecyclerView.Adapter<FestivalImageAdapter.MyViewHolder> {
 
     private Context context;
-    private List<ListPostItemFestival> images;
+    private List<ListTemplateItem> images;
     private LayoutInflater inflater;
     private String festival,id;
     private SessionManager pref_manager;
-    public FestivalImageAdapter(Context context, List<ListPostItemFestival> images, String Fest, String id){
+    public FestivalImageAdapter(Context context, List<ListTemplateItem> images, String Fest, String id){
         this.context = context;
         this.images = images;
         inflater = LayoutInflater.from(context);
@@ -52,7 +53,7 @@ public class FestivalImageAdapter extends RecyclerView.Adapter<FestivalImageAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         holder.animationView.setVisibility(View.VISIBLE);
-        Picasso.get().load(images.get(position).getBackgroundImgPath()).into(holder.imageView, new com.squareup.picasso.Callback() {
+        Picasso.get().load(images.get(position).getTemplateDemoImagePath()).into(holder.imageView, new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
                 holder.animationView.setVisibility(View.GONE);
@@ -74,7 +75,7 @@ public class FestivalImageAdapter extends RecyclerView.Adapter<FestivalImageAdap
 
                 v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
                 v.draw(canvas);
-                new ImageEditor.Builder(((Activity)context), images.get(position).getBackgroundImgPath(),festival,pref_manager.getName()).setStickerAssets("stickers").festivalCall(returnedBitmap);
+                new ImageEditor.Builder(((Activity)context), images.get(position).getTemplateImagePath(),festival,pref_manager.getName()).setStickerAssets("stickers").festivalCall(images.get(position).getTemplateImagePath(),images.get(position).getPostId(),images.get(position).getTemplateId());
 
             }
         });
