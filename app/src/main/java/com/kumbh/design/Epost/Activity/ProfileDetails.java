@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -35,13 +34,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.droidninja.imageeditengine.model.UserData;
-import com.google.gson.JsonObject;
 import com.kumbh.design.Epost.FileUploadService;
 import com.kumbh.design.Epost.R;
 import com.kumbh.design.Epost.ServiceGenerator;
 import com.kumbh.design.Epost.util.SessionManager;
+import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,9 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -64,7 +60,7 @@ import retrofit2.Callback;
 public class ProfileDetails extends AppCompatActivity {
 
 
-    EditText et_email, et_mob, et_website, et_fb, et_insta, et_link,et_address;
+    EditText et_email, et_mob, et_website, et_fb, et_insta, et_twitter,et_address,et_linkedin;
     ImageView img_edit, my_logo, account_back;
     Button bt_submit;
     private boolean valid;
@@ -75,12 +71,13 @@ public class ProfileDetails extends AppCompatActivity {
     SessionManager shared_pr;
     String websiteUrl = "";
     ProgressDialog pb_festival;
-    String instagram = "";
+    String instagram = "",twitterText;
     String facebook = "";
     String linkedin = "";
     String comapanyAddress="";
     private String filename;
     private UserData user;
+    private MultipartBody.Part body;
 
 
     @Override
@@ -93,14 +90,16 @@ public class ProfileDetails extends AppCompatActivity {
         et_website = findViewById(R.id.et_website_url);
         et_mob = findViewById(R.id.et_mobno);
         et_insta = findViewById(R.id.et_insta_link);
-        et_link = findViewById(R.id.et_linkdin_link);
+        et_twitter = findViewById(R.id.et_twitter_link);
+        et_linkedin = findViewById(R.id.et_linkedin_link);
         bt_submit = findViewById(R.id.bt_submit);
         img_edit = findViewById(R.id.img_edit);
         my_logo = findViewById(R.id.my_logo);
         account_back = findViewById(R.id.account_back);
         shared_pr = new SessionManager(getApplicationContext());
-        getData();
         pb_festival = new ProgressDialog(this);
+        getData();
+
         my_logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,12 +143,13 @@ public class ProfileDetails extends AppCompatActivity {
         String userId = shared_pr.getUserId();
 
         //  Log.d("DATA_URL","https://api.qwant.com/api/search/images?count=50&q="+festival+"+backgrounds&t=images&safesearch=1&locale=en_US&uiv=4");
-//        pb_setimage.setVisibility(View.VISIBLE);
+        show_dialog("Please Wait");
         StringRequest request = new StringRequest(Request.Method.GET, "https://www.kumbhdesign.in/mobile-app/depost/api/profile-update/" + userId, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
                 try {
+                    hide_dialog();
 //                    pb_setimage.setVisibility(View.GONE);
 
                     JSONObject jsonObject = null;
@@ -166,31 +166,52 @@ public class ProfileDetails extends AppCompatActivity {
                     if (error == 0) {
 
                         JSONObject userData = jsonObject2.getJSONObject("user");
-                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"), userData.getString("company_address"));
+                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"), userData.getString("company_address"),userData.getString("twitter_url"));
 
 
 
                     }
 
-                    et_email.setText(user.getCompanyEmail());
-                    et_address.setText(user.getAddress());
-                    et_mob.setText(user.getMobileNumber());
-                    if(user.getWebsiteUrl()!=null)
+                    if(user.getCompany_logo_path()!=null && user.getCompany_logo_path().trim().length() > 0 && user.getCompany_logo_path().compareTo("null") != 0)
+                    {
+                        Picasso.get().load(user.getCompany_logo_path()).placeholder(R.drawable.logo_cicle).error(R.drawable.logo_cicle).into(my_logo);
+                    }
+
+
+                    if(user.getCompanyEmail()!=null && user.getCompanyEmail().trim().length() > 0 && user.getCompanyEmail().compareTo("null") != 0)
+                    {
+                        et_email.setText(user.getCompanyEmail());
+                    }
+                    if(user.getAddress()!=null && user.getAddress().trim().length() > 0 && user.getAddress ().compareTo("null") != 0)
+                    {
+                        et_address.setText(user.getAddress());
+                    }
+                    if(user.getMobileNumber()!=null && user.getMobileNumber().trim().length() > 0 && user.getMobileNumber ().compareTo("null") != 0)
+                    {
+                        et_mob.setText(user.getMobileNumber());
+                    }
+
+                    if(user.getWebsiteUrl()!=null && user.getWebsiteUrl().trim().length() > 0 && user.getWebsiteUrl().compareTo("null") != 0)
                     {
                         et_website.setText(user.getWebsiteUrl());
                     }
-                    if(user.getFacebookUrl()!=null)
+                    if(user.getFacebookUrl()!=null && user.getFacebookUrl().trim().length() > 0 && user.getFacebookUrl().compareTo("null") != 0)
 
                     {
                         et_fb.setText(user.getFacebookUrl());
                     }
-                    if(user.getInstagramUrl()!=null)
+                    if(user.getInstagramUrl()!=null && user.getInstagramUrl().trim().length() > 0  && user.getInstagramUrl().compareTo("null") != 0 )
                     {
                         et_insta.setText(user.getInstagramUrl());
                     }
-                    if(user.getLinkedinUrl()!=null)
+                    if(user.getLinkedinUrl()!=null && user.getLinkedinUrl().trim().length() > 0 && user.getLinkedinUrl().compareTo("null") != 0)
                     {
-                        et_link.setText(user.getLinkedinUrl());
+                        et_linkedin.setText(user.getLinkedinUrl());
+                    }
+
+                    if(user.getTwitter_url()!=null && user.getTwitter_url().trim().length() > 0 && user.getTwitter_url().compareTo("null") != 0)
+                    {
+                        et_twitter.setText(user.getTwitter_url());
                     }
 
 
@@ -202,6 +223,7 @@ public class ProfileDetails extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        hide_dialog();;
 //                        pb_setimage.setVisibility(View.GONE);
                         Log.d("Error", error.toString());
                         Toast.makeText(ProfileDetails.this, error.toString(), Toast.LENGTH_LONG).show();
@@ -238,11 +260,19 @@ public class ProfileDetails extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    //b = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    b = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                     tempUri = getImageUri(ProfileDetails.this, b);
                     Log.d("imageUri", String.valueOf(tempUri));
                     path = getRealPathFromURI(tempUri);
-                     filename=path.substring(path.lastIndexOf("/")+1);
+                    shared_pr.setLogoPhoto(path);
+                    if(user.getCompany_logo_path()!=null && user.getCompany_logo_path().trim().length() > 0 && user.getCompany_logo_path().compareTo("null")!=0)
+                    {
+                        filename=user.getCompany_logo_path().substring(user.getCompany_logo_path().lastIndexOf("/")+1);
+                    }
+                    else{
+                        filename=path.substring(path.lastIndexOf("/")+1);
+                    }
+
                     Bitmap thumbnail = (BitmapFactory.decodeFile(path));
                     Log.w("image", path + "");
                     my_logo.setImageBitmap(thumbnail);
@@ -256,7 +286,14 @@ public class ProfileDetails extends AppCompatActivity {
                 c.moveToFirst();
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 path = c.getString(columnIndex);
-                filename=path.substring(path.lastIndexOf("/")+1);
+                shared_pr.setLogoPhoto(path);
+                if(user.getCompany_logo_path()!=null && user.getCompany_logo_path().trim().length() > 0 && user.getCompany_logo_path().compareTo("null")!=0)
+                {
+                    filename=user.getCompany_logo_path().substring(user.getCompany_logo_path().lastIndexOf("/")+1);
+                }
+                else{
+                    filename=path.substring(path.lastIndexOf("/")+1);
+                }
                 c.close();
                 Bitmap thumbnail = (BitmapFactory.decodeFile(path));
                 Log.w("image", path + "");
@@ -347,8 +384,9 @@ public class ProfileDetails extends AppCompatActivity {
         websiteUrl=et_website.getText().toString();
         instagram=et_insta.getText().toString();
         facebook=et_fb.getText().toString();
-        linkedin=et_link.getText().toString();
+        linkedin= et_linkedin.getText().toString();
         comapanyAddress=et_address.getText().toString();
+        twitterText=et_twitter.getText().toString();
 
         if (et_email.getText().toString().isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(et_email.getText().toString()).matches()) {
             et_email.setError("enter a valid email address");
@@ -363,7 +401,23 @@ public class ProfileDetails extends AppCompatActivity {
         }
         else if(path == null || path.length() ==0)
         {
-            Toast.makeText(ProfileDetails.this,"Please select logo image",Toast.LENGTH_LONG).show();
+            if(user.getCompany_logo_path()!=null && user.getCompany_logo_path().trim().length()>0 && user.getCompany_logo_path().compareTo("null")!=0)
+            {
+//               String path= shared_pr.getLogoPhoto();
+
+//                if(path!=null)
+//                {
+//                    filename=path.substring(path.lastIndexOf("/")+1);
+//                }
+//                else{
+//                    filename=user.getCompany_logo_path().substring(user.getCompany_logo_path().lastIndexOf("/")+1);
+//                }
+                uploadFile(null);
+            }
+            else{
+                Toast.makeText(ProfileDetails.this,"Please select logo image",Toast.LENGTH_LONG).show();
+
+            }
         }
 //        else if (et_website.getText().toString()!=null && et_website.getText().toString().length() > 0) {
 //            websiteUrl = "";
@@ -413,27 +467,38 @@ public class ProfileDetails extends AppCompatActivity {
         // create upload service client
         FileUploadService service =
                 ServiceGenerator.createService(FileUploadService.class);
+        if(fileUri!= null)
+        {
 
-        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
-        // use the FileUtils to get the actual file by uri
-        File file = new File(fileUri);
 
-        // create RequestBody instance from file
-        RequestBody requestFile =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"),
-                        file
-                );
+            // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
+            // use the FileUtils to get the actual file by uri
+            File file = new File(fileUri);
 
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("company_logo", file.getName(), requestFile);
+            // create RequestBody instance from file
+            RequestBody requestFile =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"),
+                            file
+                    );
 
-        // add another part within the multipart request
-        String descriptionString = "hello, this is description speaking";
-        RequestBody description =
-                RequestBody.create(
-                        okhttp3.MultipartBody.FORM, descriptionString);
+            // MultipartBody.Part is used to send also the actual file name
+             body =
+                    MultipartBody.Part.createFormData("company_logo", file.getName(), requestFile);
+
+            // add another part within the multipart request
+            String descriptionString = "hello, this is description speaking";
+            RequestBody description =
+                    RequestBody.create(
+                            okhttp3.MultipartBody.FORM, descriptionString);
+        }
+        else{
+            if(user.getCompany_logo_path()!=null && user.getCompany_logo_path().trim().length() > 0 && user.getCompany_logo_path().compareTo("null")!=0)
+            {
+                filename=user.getCompany_logo_path().substring(user.getCompany_logo_path().lastIndexOf("/")+1);
+            }
+        }
+
 
         RequestBody emailRequest = RequestBody.create(MediaType.parse("text/plain"),  et_email.getText().toString());
         RequestBody mobileRequest = RequestBody.create(MediaType.parse("text/plain"), et_mob.getText().toString());
@@ -441,6 +506,7 @@ public class ProfileDetails extends AppCompatActivity {
         RequestBody facebookdRequest = RequestBody.create(MediaType.parse("text/plain"), facebook);
         RequestBody linkedinRequest = RequestBody.create(MediaType.parse("text/plain"), linkedin);
         RequestBody instadRequest = RequestBody.create(MediaType.parse("text/plain"), instagram);
+        RequestBody twitterRequest = RequestBody.create(MediaType.parse("text/plain"), twitterText);
         RequestBody logohidden = RequestBody.create(MediaType.parse("text/plain"), filename);
         RequestBody companyAddress = RequestBody.create(MediaType.parse("text/plain"), comapanyAddress);
 
@@ -448,7 +514,7 @@ public class ProfileDetails extends AppCompatActivity {
 
 
         // finally, execute the request
-        Call<ResponseBody> call = service.upload(userId,body, shared_pr.getUserId(), emailRequest, mobileRequest,websiteRequest,facebookdRequest,instadRequest,linkedinRequest,logohidden,companyAddress);
+        Call<ResponseBody> call = service.upload(userId,body, shared_pr.getUserId(), emailRequest, mobileRequest,websiteRequest,facebookdRequest,instadRequest,linkedinRequest,twitterRequest,logohidden,companyAddress);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {

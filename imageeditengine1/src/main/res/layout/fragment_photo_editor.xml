@@ -11,12 +11,13 @@
     android:id="@+id/re_layout"
     tools:context=".ImageEditActivity">
 
-    <com.droidninja.imageeditengine.views.PhotoEditorView
-        android:id="@+id/photo_editor_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        android:scaleType="centerCrop"/>
+  <com.droidninja.imageeditengine.views.PhotoEditorViewMormal
+      android:id="@+id/photo_editor_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+       android:layout_centerInParent="true"
+      android:visibility="visible"
+      android:scaleType="centerCrop"/>
 
   <RelativeLayout
       android:id="@+id/toolbar_layout"
@@ -36,72 +37,71 @@
       android:visibility="gone"
       tools:ignore="MissingPrefix" />
 
-    <ImageView
-        android:id="@+id/back_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/ic_cam_back"
-        android:clickable="true"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/share_back"/>
+  <ImageView
+      android:id="@+id/back_iv"
+      android:layout_width="30dp"
+      android:layout_height="30dp"
+      android:padding="5dp"
+      android:layout_marginTop="10dp"
+      android:src="@drawable/ic_cam_back"
+      android:clickable="true"
+      android:layout_marginLeft="10dp"
+      android:background="@drawable/share_back"/>
 
-    <ImageView
-        android:id="@+id/back_color"
-        android:visibility="gone"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/stickers_btn"
-        android:layout_toStartOf="@+id/stickers_btn"
-        android:src="@drawable/paint"
-        android:clickable="true"
-        android:layout_marginRight="12dp"
-        android:background="@drawable/share_back"/>
+  <ImageView
+      android:id="@+id/back_color"
+      android:visibility="gone"
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:padding="5dp"
+      android:layout_marginTop="10dp"
+      android:layout_toLeftOf="@+id/stickers_btn"
+      android:layout_toStartOf="@+id/stickers_btn"
+      android:src="@drawable/paint"
+      android:clickable="true"
+      android:layout_marginRight="12dp"
+      android:background="@drawable/share_back"/>
 
-    <ImageView
-        android:id="@+id/stickers_btn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/add_text_btn"
-        android:layout_toStartOf="@+id/add_text_btn"
-        android:src="@drawable/ic_cam_sticker"
-        android:clickable="true"
-        android:layout_marginRight="12dp"
-        android:background="@drawable/share_back"/>
+  <ImageView
+      android:id="@+id/stickers_btn"
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:padding="5dp"
+      android:layout_marginTop="10dp"
+      android:layout_toLeftOf="@+id/add_text_btn"
+      android:layout_toStartOf="@+id/add_text_btn"
+      android:src="@drawable/ic_cam_sticker"
+      android:clickable="true"
+      android:layout_marginRight="12dp"
+      android:background="@drawable/share_back"/>
 
-    <ImageView
-        android:id="@+id/add_text_btn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:visibility="gone"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/paint_btn"
-        android:layout_toStartOf="@+id/paint_btn"
-        android:src="@drawable/ic_cam_text"
-        android:clickable="true"
-        android:layout_marginRight="12dp"
-        android:background="@drawable/share_back"/>
+  <ImageView
+      android:id="@+id/add_text_btn"
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:padding="5dp"
+      android:layout_marginTop="10dp"
+      android:layout_toLeftOf="@+id/paint_btn"
+      android:layout_toStartOf="@+id/paint_btn"
+      android:src="@drawable/ic_cam_text"
+      android:clickable="true"
+      android:layout_marginRight="12dp"
+      android:background="@drawable/share_back"/>
 
-    <ImageView
-        android:id="@+id/paint_btn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:clickable="true"
-        android:src="@drawable/ic_cam_draw"
-        android:background="@drawable/share_back"/>
+  <ImageView
+      android:id="@+id/paint_btn"
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:padding="5dp"
+      android:layout_marginTop="10dp"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginRight="10dp"
+      android:clickable="true"
+      android:src="@drawable/ic_cam_draw"
+      android:background="@drawable/share_back"/>
 
-    <Button
+  <Button
       android:id="@+id/share"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"

@@ -2,8 +2,9 @@
 <resources>
     <string-array name="fonts">
 
-        <item>@string/TheBeautyline_FreeVersion</item>
+
         <item>@string/OpenSans</item>
+        <item>@string/TheBeautyline_FreeVersion</item>
         <item>@string/Roboto</item>
         <item>@string/Chapaza</item>
         <item>@string/Montserrat</item>

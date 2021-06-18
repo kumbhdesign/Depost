@@ -5,12 +5,15 @@
         android:id="@+id/profile"
         android:title="My Profile" />
 
+
+
+    <item
+        android:id="@+id/menycurrentplan"
+        android:title="Current Plan" />
     <item
         android:id="@+id/menuLogout"
         android:title="Logout" />
 
-    <item
-        android:id="@+id/details"
-        android:title="Account Detail" />
+
 
 </menu>

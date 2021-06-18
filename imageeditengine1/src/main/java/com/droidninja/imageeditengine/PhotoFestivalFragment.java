@@ -125,7 +125,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     int[] textSizes;
     View selectedView;
     int selectViewIndex;
-    ImageView imageButtonFontChanges, imageButtonAlignmentChanges, image_font, color_icon, imageItalic, fbImage, twitter, linkedin;
+    ImageView imageButtonFontChanges, imageButtonAlignmentChanges, image_font, color_icon, imageItalic, fbImage, twitter, linkedin,instagram;
     float scalediff;
     SeekBar seekBar1;
     RelativeLayout relativeLayoutSocial;
@@ -211,7 +211,9 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 
                 imgcloselogo.setVisibility(View.GONE);
 
-
+                rvColor.setVisibility(View.GONE);
+                spinner.setVisibility(View.GONE);
+                seekBar1.setVisibility(View.GONE);
                 return false;
 
             }
@@ -250,10 +252,16 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
         //height 1378
         //width 720
         densityData = (int) Math.round(getActivity().getResources().getDisplayMetrics().density);
-        int dpValur = (int) Math.round(1200 / getActivity().getResources().getDisplayMetrics().density);
-        int width = dpValur;
-        int height = dpValur;
+        Log.v("densityData",densityData+"");
+//        Toast.makeText(getActivity(),densityData,Toast.LENGTH_LONG).show();
+        int dpValur = (int) Math.round(1200 / densityData);
+        int imageViewSize = (int) ((float)  getActivity().getResources().getDisplayMetrics().widthPixels * 1.8);
+
+        int width = getActivity().getResources().getDisplayMetrics().widthPixels-50;
+        int   height = getActivity().getResources().getDisplayMetrics().heightPixels/2 ;
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+
+
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         photoEditorView.setLayoutParams(layoutParams);
         mLayoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -297,6 +305,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
         fbImage = rootViewSocial.findViewById(R.id.social_fb);
         twitter = rootViewSocial.findViewById(R.id.social_twitter);
         linkedin = rootViewSocial.findViewById(R.id.social_linkedin);
+        instagram = rootViewSocial.findViewById(R.id.social_insta);
         imgcloselogo = rootView.findViewById(R.id.imgPhotoEditorClose);
         imgsocilaLogo = rootViewSocial.findViewById(R.id.imgPhotoEditorClose);
         photoEditorView.setImageView(mainImageView, null, this);
@@ -313,8 +322,10 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                 txtEmail.setBackgroundResource(0);
                 tvAddress.setBackgroundResource(0);
                 tvMobile.setBackgroundResource(0);
+                tvTagline.setBackgroundResource(0);
                 tvWebsite.setBackgroundResource(0);
                 relativeLayoutSocial.setBackgroundResource(0);
+                seekBar1.setVisibility(View.GONE);
                 logoImage.setBackgroundResource(0);
                 imgclodetag.setVisibility(View.GONE);
 
@@ -329,6 +340,8 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                 imgsocilaLogo.setVisibility(View.GONE);
 
                 imgcloselogo.setVisibility(View.GONE);
+
+
 
                 return false;
             }
@@ -508,6 +521,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                     fbImage.setColorFilter(colorCode);
                     twitter.setColorFilter(colorCode);
                     linkedin.setColorFilter(colorCode);
+                    instagram.setColorFilter(colorCode);
 
                 }
             }
@@ -839,19 +853,41 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 
     private void onshareMode(boolean status) {
         if (status) {
-            String text = null;
-            Log.d("fest_name_img", FestivalName);
-            if (FestivalName.equalsIgnoreCase("congratulation")) {
-                text = "\n\n" + UserName + " Wishing you a" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
-            } else if (FestivalName.equalsIgnoreCase("loveu")) {
-                text = "\n\n" + UserName + " say " + "LOVE U" + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
-            } else {
-                text = "\n\n" + UserName + " Wishing you a Happy" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
-            }
-            //text = "\n\n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://goo.gl/SU7Xbp";
+//            String text = null;
+//            Log.d("fest_name_img", FestivalName);
+//            if (FestivalName.equalsIgnoreCase("congratulation")) {
+//                text = "\n\n" + UserName + " Wishing you a" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
+//            } else if (FestivalName.equalsIgnoreCase("loveu")) {
+//                text = "\n\n" + UserName + " say " + "LOVE U" + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
+//            } else {
+//                text = "\n\n" + UserName + " Wishing you a Happy" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
+//            }
+//            //text = "\n\n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://goo.gl/SU7Xbp";
             txtEmail.setBackgroundResource(0);
             tvAddress.setBackgroundResource(0);
             tvMobile.setBackgroundResource(0);
+            tvWebsite.setBackgroundResource(0);
+            tvTagline.setBackgroundResource(0);
+            relativeLayoutSocial.setBackgroundResource(0);
+            logoImage.setBackgroundResource(0);
+            imgclodetag.setVisibility(View.GONE);
+
+            imgcloseEmail.setVisibility(View.GONE);
+
+            imgcloseAddress.setVisibility(View.GONE);
+
+            imgcloseMob.setVisibility(View.GONE);
+
+            imgcloseWebsute.setVisibility(View.GONE);
+
+            imgsocilaLogo.setVisibility(View.GONE);
+
+            imgcloselogo.setVisibility(View.GONE);
+
+
+            rvColor.setVisibility(View.GONE);
+            spinner.setVisibility(View.GONE);
+            seekBar1.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);
             Bitmap bitmap = Bitmap.createBitmap(photoEditorView.getWidth(), photoEditorView.getHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
@@ -873,7 +909,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("image/jpeg");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-            intent.putExtra(Intent.EXTRA_TEXT, text);
+//            intent.putExtra(Intent.EXTRA_TEXT, text);
             startActivity(Intent.createChooser(intent, "Share Image"));
 
 
@@ -969,33 +1005,33 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
                     if (error == 0) {
 
                         JSONObject userData = jsonObject2.getJSONObject("user");
-                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"), userData.getString("company_address"));
+                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"), userData.getString("company_address"),userData.getString("twitter_url"));
                         Log.v("userData", user.getCompanyEmail());
 
                     }
-                    if (user.getCompany_logo_path() != null && user.getCompany_logo_path().trim().length() > 0) {
+                    if (user.getCompany_logo_path() != null && user.getCompany_logo_path().trim().length() > 0 && user.getCompany_logo_path().compareTo("null") != 0) {
                         addImage(0, user.getCompany_logo_path(), template.getTemplateLogoLeftPadding(), template.getTemplateLogoTopPadding(), densityData);
 
                     }
-                    if (user.getCompanyEmail() != null && user.getCompanyEmail().trim().length() > 0) {
+                    if (user.getCompanyEmail() != null && user.getCompanyEmail().trim().length() > 0 && user.getCompanyEmail().compareTo("null") != 0) {
                         setText("Email : " + user.getCompanyEmail(), Integer.parseInt(template.getTemplateEmailLeftPadding()), Integer.parseInt(template.getTemplateEmailTopPadding()));
 
                     }
-                    if (user.getAddress() != null && user.getAddress().trim().length() > 0) {
+                    if (user.getAddress() != null && user.getAddress().trim().length() > 0 && user.getAddress().compareTo("null") != 0) {
                         setAddressText(user.getAddress());
                     }
-                    if (user.getMobileNumber() != null && user.getMobileNumber().trim().length() > 0) {
+                    if (user.getMobileNumber() != null && user.getMobileNumber().trim().length() > 0 && user.getMobileNumber().compareTo("null") != 0 ) {
                         setMobileText("Phone : " + user.getMobileNumber(), Integer.parseInt(template.getTemplateMobileLeftPadding()), Integer.parseInt(template.getTemplateMobileTopPadding()));
 
                     }
-                    if (user.getWebsiteUrl() != null && user.getWebsiteUrl().trim().length() > 0) {
+                    if (user.getWebsiteUrl() != null && user.getWebsiteUrl().trim().length() > 0 && user.getWebsiteUrl().compareTo("null") != 0 ) {
                         setWebsiteText(user.getWebsiteUrl(), Integer.parseInt(template.getTemplateMobileLeftPadding()), Integer.parseInt(template.getTemplateMobileTopPadding()));
 
                     }
-//                    if (template.getTemplateTagline() != null && template.getTemplateTagline().trim().length() > 0) {
-//                        setTagLineText(template.getTemplateTagline(), Integer.parseInt(template.getTemplateMobileLeftPadding()), Integer.parseInt(template.getTemplateMobileTopPadding()));
-//
-//                    }
+                    if (template.getTemplateTagline() != null && template.getTemplateTagline().trim().length() > 0 &&  template.getTemplateTagline().compareTo("null") != 0) {
+                        setTagLineText(template.getTemplateTagline(), Integer.parseInt(template.getTemplateMobileLeftPadding()), Integer.parseInt(template.getTemplateMobileTopPadding()));
+
+                    }
 
 
 //                    setAddressText(user.getAddress(), Integer.parseInt(template.getTemplateAddressLeftPadding()), Integer.parseInt(template.getTemplateAddressTopPadding()));
@@ -1075,7 +1111,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 //        txtEmail.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-        layoutParams.setMargins(0, 50, 0, 0);
+        layoutParams.setMargins(0, 20, 0, 0);
         MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
@@ -1206,7 +1242,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
         tvMobile.setTextColor(color);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-        layoutParams.setMargins(0, 100, 0, 0);
+        layoutParams.setMargins(0, 120, 0, 0);
         MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
@@ -1394,7 +1430,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
     }
 
     public void addImage(int desiredImage, String path, String templateLogoLeftPadding, String templateLogoTopPadding, int densityData) {
-
+        Log.v("imagepath",path);
 
         final View rootView = mLayoutInflater.inflate(R.layout.img_layout, null);
         logoImage = rootView.findViewById(R.id.imgPhotoEditorImage);
@@ -1474,6 +1510,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
         relativeLayoutSocial = rootView.findViewById(R.id.rl_social);
         fbImage = rootView.findViewById(R.id.social_fb);
         linkedin = rootView.findViewById(R.id.social_linkedin);
+        instagram = rootView.findViewById(R.id.social_insta);
         twitter = rootView.findViewById(R.id.social_twitter);
         imgsocilaLogo = rootView.findViewById(R.id.imgPhotoEditorClose);
         imgsocilaLogo.setOnClickListener(new View.OnClickListener() {
@@ -1483,18 +1520,23 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
             }
         });
 
-        if (user.getFacebookUrl() != null && user.getFacebookUrl().trim().length() > 0) {
+        if (user.getFacebookUrl() != null && user.getFacebookUrl().trim().length() > 0 && user.getFacebookUrl().compareTo("null") != 0  ) {
 
             fbImage.setVisibility(VISIBLE);
         }
 
-        if (user.getLinkedinUrl() != null && user.getLinkedinUrl().trim().length() > 0) {
+        if (user.getLinkedinUrl() != null && user.getLinkedinUrl().trim().length() > 0 && user.getLinkedinUrl().compareTo("null") != 0 ) {
             linkedin = rootView.findViewById(R.id.social_linkedin);
             linkedin.setVisibility(VISIBLE);
         }
-        if (user.getInstagramUrl() != null && user.getInstagramUrl().trim().length() > 0) {
+        if (user.getTwitter_url() != null && user.getTwitter_url().trim().length() > 0 && user.getTwitter_url().compareTo("null") != 0) {
             twitter = rootView.findViewById(R.id.social_twitter);
             twitter.setVisibility(VISIBLE);
+        }
+
+        if (user.getInstagramUrl() != null && user.getInstagramUrl().trim().length() > 0 && user.getInstagramUrl().compareTo("null") != 0) {
+            instagram = rootView.findViewById(R.id.social_insta);
+            instagram.setVisibility(VISIBLE);
         }
 
 //        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(40, 40);
@@ -1507,6 +1549,8 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
         linkedin.getLayoutParams().width = 40;
         twitter.getLayoutParams().height = 40;
         twitter.getLayoutParams().width = 40;
+        instagram.getLayoutParams().height = 40;
+        instagram.getLayoutParams().width = 40;
 
         layoutParam2s.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         layoutParam2s.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
@@ -1545,6 +1589,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 
                 imgsocilaLogo.setVisibility(VISIBLE);
                 imgcloseWebsute.setVisibility(View.GONE);
+                cardView.setVisibility(VISIBLE);
             }
 
             @Override

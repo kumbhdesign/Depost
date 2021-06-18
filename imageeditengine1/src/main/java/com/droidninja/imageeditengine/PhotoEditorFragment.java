@@ -11,11 +11,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -27,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -40,20 +36,19 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.droidninja.imageeditengine.brush.DrawableOnTouchView;
 import com.droidninja.imageeditengine.utils.Matrix3;
-import com.droidninja.imageeditengine.views.PhotoEditorView;
+import com.droidninja.imageeditengine.views.PhotoEditorViewMormal;
 import com.droidninja.imageeditengine.views.ViewTouchListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import static com.droidninja.imageeditengine.ImageEditor.Builder.FestivalName;
 import static com.droidninja.imageeditengine.ImageEditor.Builder.UserName;
-import static com.droidninja.imageeditengine.views.PhotoEditorView.animationView;
-import static com.droidninja.imageeditengine.views.PhotoEditorView.layout;
-import static com.droidninja.imageeditengine.views.PhotoEditorView.mainImageView;
-import static com.droidninja.imageeditengine.views.PhotoEditorView.recyclerView;
+import static com.droidninja.imageeditengine.views.PhotoEditorViewMormal.animationView;
+import static com.droidninja.imageeditengine.views.PhotoEditorViewMormal.layout;
+import static com.droidninja.imageeditengine.views.PhotoEditorViewMormal.mainImageView;
+import static com.droidninja.imageeditengine.views.PhotoEditorViewMormal.recyclerView;
 
 public class PhotoEditorFragment extends BaseFragment implements View.OnClickListener, ViewTouchListener {
 
@@ -61,7 +56,7 @@ public class PhotoEditorFragment extends BaseFragment implements View.OnClickLis
     public static ImageView addTextButton;
     public static Button share;
     public static ImageView imgshoot;
-    PhotoEditorView photoEditorView;
+    PhotoEditorViewMormal photoEditorView;
     public static ImageView paintButton;
     ImageView deleteButton;
     public static ImageView back_color;
@@ -128,8 +123,6 @@ public class PhotoEditorFragment extends BaseFragment implements View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_photo_editor, container, false);
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
         return v;
     }
 
@@ -194,9 +187,6 @@ public class PhotoEditorFragment extends BaseFragment implements View.OnClickLis
         imgshoot = view.findViewById(R.id.imgshoot);
         textSizes = getResources().getIntArray(R.array.fontSize);
 
-
-
-//        photoEditorView.getImage();
         if (getArguments() != null && getActivity() != null && getActivity().getIntent() != null) {
             final String imagePath = getArguments().getString(ImageEditor.EXTRA_IMAGE_PATH);
             animationView.setVisibility(View.VISIBLE);
@@ -514,11 +504,11 @@ public class PhotoEditorFragment extends BaseFragment implements View.OnClickLis
             String text = null;
             Log.d("fest_name_img",FestivalName);
             if(FestivalName.equalsIgnoreCase("congratulation")){
-                text = "\n\n" + UserName  + " Wishing you a" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
+                text = "\n\n" + UserName  + " Wishing you a" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://goo.gl/SU7Xbp";
             }else if(FestivalName.equalsIgnoreCase("loveu")){
-                text = "\n\n" + UserName + " say " + "LOVE U" + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
+                text = "\n\n" + UserName + " say " + "LOVE U" + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://goo.gl/SU7Xbp";
             }else {
-                text = "\n\n" + UserName + " Wishing you a Happy" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://is.gd/FUEfj6";
+                text = "\n\n" + UserName + " Wishing you a Happy" + " " + FestivalName.replace("+", " ") + " \n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://goo.gl/SU7Xbp";
             }
             //text = "\n\n" + getString(com.droidninja.imageeditengine.R.string.share) + " \n https://goo.gl/SU7Xbp";
 
@@ -530,42 +520,27 @@ public class PhotoEditorFragment extends BaseFragment implements View.OnClickLis
             Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.watermark_img);
             bitmap1 = mark(bitmap1, "Hello");
 
-//           imgshoot.setImageBitmap(bitmap1);
+            imgshoot.setImageBitmap(bitmap1);
 
 //            String bitmapPath = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), bitmap, "Depost", null);
 //            Uri bitmapUri = Uri.parse(bitmapPath);
 
+            String fileName = new SimpleDateFormat("yyyyMMddHHmmss'.png'").format(new Date());
+            String savedImagePath = SaveToStorageUtil.save(bitmap, getContext(),fileName);
+            ImageScannerAdapter adapter = new ImageScannerAdapter(getContext());
+            adapter.scanImage(savedImagePath);
+            ImageProcessor.getInstance().resetModificationFlag();
+            File file = new File(savedImagePath);
 
-
-
-            String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, "IMG_" + Calendar.getInstance().getTime(), null);
-
-            Uri uri = Uri.parse(path);
+            Uri contentUri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".provider", file);
 
             Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("image/jpeg");
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.setDataAndType(contentUri,"image/png");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(contentUri, getContext().getContentResolver().getType(contentUri));
+            intent.putExtra(Intent.EXTRA_STREAM, contentUri);
             intent.putExtra(Intent.EXTRA_TEXT, text);
-            startActivity(Intent.createChooser(intent, "Share Image"));
-
-
-
-//            String fileName = new SimpleDateFormat("yyyyMMddHHmmss'.png'").format(new Date());
-//            String savedImagePath = SaveToStorageUtil.save(bitmap, getContext(),fileName);
-//            ImageScannerAdapter adapter = new ImageScannerAdapter(getContext());
-//            adapter.scanImage(savedImagePath);
-//            ImageProcessor.getInstance().resetModificationFlag();
-//            File file = new File(savedImagePath);
-//
-//            Uri contentUri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".provider", file);
-//
-//            Intent intent = new Intent(Intent.ACTION_SEND);
-//            intent.setDataAndType(contentUri,"image/png");
-//            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//            intent.setDataAndType(contentUri, getContext().getContentResolver().getType(contentUri));
-//            intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-//            intent.putExtra(Intent.EXTRA_TEXT, text);
-//            startActivity(Intent.createChooser(intent, "Share"));
+            startActivity(Intent.createChooser(intent, "Share"));
 
         }
     }

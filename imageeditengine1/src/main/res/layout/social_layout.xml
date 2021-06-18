@@ -7,6 +7,7 @@
    <RelativeLayout
        android:layout_width="match_parent"
        android:id="@+id/rl_social"
+       android:gravity="center"
        android:layout_margin="8dp"
        android:layout_height="match_parent">
        <ImageView
@@ -44,6 +45,23 @@
 
 
            />
+
+       <ImageView
+           android:id="@+id/social_insta"
+           android:layout_width="40dp"
+           android:visibility="gone"
+           android:layout_toRightOf="@+id/social_twitter"
+           android:adjustViewBounds="true"
+           android:src="@drawable/instagram"
+           android:layout_marginLeft="1dp"
+           android:layout_marginRight="5dp"
+           android:layout_height="40dp"
+
+
+           />
+
+
+
    </RelativeLayout>
 
     <ImageView

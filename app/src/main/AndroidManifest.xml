@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <permission
         android:name="your.application.package.permission.MAPS_RECEIVE"
@@ -34,7 +35,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:name">
-        <activity android:name=".Activity.Festival_list_page_normal"></activity>
+        <activity android:name=".Activity.currentPlanActivity"></activity>
+        <activity android:name=".Activity.get_premium_activity" />
+        <activity android:name=".Activity.Festival_list_page_normal" />
         <activity android:name=".Activity.SetFestivalImagesActivity" />
         <activity android:name=".Activity.test" />
         <activity

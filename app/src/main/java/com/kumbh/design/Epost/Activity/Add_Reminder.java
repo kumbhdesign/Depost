@@ -239,11 +239,16 @@ public class Add_Reminder extends AppCompatActivity implements AdapterView.OnIte
                         Intent i = new Intent(getApplicationContext(), Profile.class);
                         startActivity(i);
                         break;
-                    case R.id.details:
+                    case R.id.menycurrentplan:
                         Log.v("print","sdhg");
-                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+                        Intent intent = new Intent(getApplicationContext(), currentPlanActivity.class);
                         startActivity(intent);
                         break;
+//                    case R.id.details:
+//                        Log.v("print","sdhg");
+//                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+//                        startActivity(intent);
+//                        break;
                     default:
                         break;
                 }

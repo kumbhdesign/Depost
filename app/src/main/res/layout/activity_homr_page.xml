@@ -30,16 +30,20 @@
                 android:adjustViewBounds="true"
                 android:src="@drawable/logo"
                 android:transitionName="myImage" />
+
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/bt_go_premium"
-                android:text="Go Premium"
-                android:layout_marginRight="60dp"
-                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:layout_marginTop="5dp"
                 android:layout_alignParentRight="true"
+                android:layout_marginRight="60dp"
+                android:background="@drawable/mybutton"
                 android:padding="5dp"
-                android:background="@drawable/btn_shape"/>
+                android:text="Go Premium"
+                android:textColor="@color/colorPrimary" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile"

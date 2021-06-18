@@ -6,8 +6,7 @@
       >
         <shape
             android:shape="oval">
-            <stroke android:width="1dp"
-                android:color="#E91E63"/>
+
             <!-- Add attributes specific to your background (e.g. corner radius, colors, etc.) -->
 
             <!-- Set "padding" at minimum to match margin and add additional content padding as well, if desired -->

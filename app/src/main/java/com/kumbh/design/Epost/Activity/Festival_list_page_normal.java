@@ -106,35 +106,35 @@ public class Festival_list_page_normal extends AppCompatActivity implements Conn
         buidNewGoogleApiClient();
         setContentView(R.layout.activity_festival_list_page);
 
-        MobileAds.initialize(getApplicationContext(),"ca-app-pub-6008474329722648~3510787218");
-
-        adView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("AC291303B2DCC0629689FF6F8ABD17E1").build();
-        adView.loadAd(adRequest);
+//        MobileAds.initialize(getApplicationContext(),"ca-app-pub-6008474329722648~3510787218");
+//
+//        adView = findViewById(R.id.adView);
+//        AdRequest adRequest = new AdRequest.Builder().addTestDevice("AC291303B2DCC0629689FF6F8ABD17E1").build();
+//        adView.loadAd(adRequest);
         checkConnection();
 
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-//                Toast.makeText(Festival_list_page.this,"Ad errorcode:"+String.valueOf(errorCode),Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onAdOpened() {
-            }
-
-            @Override
-            public void onAdLeftApplication() {
-            }
-
-            @Override
-            public void onAdClosed() {
-            }
-        });
+//        adView.setAdListener(new AdListener() {
+//            @Override
+//            public void onAdLoaded() {
+//            }
+//
+//            @Override
+//            public void onAdFailedToLoad(int errorCode) {
+////                Toast.makeText(Festival_list_page.this,"Ad errorcode:"+String.valueOf(errorCode),Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onAdOpened() {
+//            }
+//
+//            @Override
+//            public void onAdLeftApplication() {
+//            }
+//
+//            @Override
+//            public void onAdClosed() {
+//            }
+//        });
 
         Intent i = getIntent();
         id = i.getStringExtra("id");
@@ -643,7 +643,11 @@ public class Festival_list_page_normal extends AppCompatActivity implements Conn
                         i= new Intent(getApplicationContext(), Profile.class);
                         startActivity(i);
                         break;
-
+                    case R.id.menycurrentplan:
+                        Log.v("print","sdhg");
+                        Intent intent = new Intent(getApplicationContext(), currentPlanActivity.class);
+                        startActivity(intent);
+                        break;
                     default:
                         break;
                 }

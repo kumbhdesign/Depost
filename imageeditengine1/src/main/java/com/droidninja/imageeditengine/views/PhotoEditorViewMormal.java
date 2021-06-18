@@ -1,10 +1,10 @@
 package com.droidninja.imageeditengine.views;
 
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,11 +28,9 @@ import com.android.volley.toolbox.Volley;
 import com.droidninja.imageeditengine.PhotoEditorFragment;
 import com.droidninja.imageeditengine.R;
 import com.droidninja.imageeditengine.brush.ColorPicker;
-import com.droidninja.imageeditengine.model.UserData;
 import com.droidninja.imageeditengine.utils.KeyboardHeightProvider;
 import com.droidninja.imageeditengine.utils.MultiTouchListener;
 import com.droidninja.imageeditengine.utils.Utility;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -47,8 +44,8 @@ import static com.droidninja.imageeditengine.PhotoEditorFragment.paintButton;
 import static com.droidninja.imageeditengine.PhotoEditorFragment.share;
 import static com.droidninja.imageeditengine.PhotoEditorFragment.stickerButton;
 
-public class PhotoEditorView extends FrameLayout implements ViewTouchListener, KeyboardHeightProvider.KeyboardHeightObserver {
-    public static RelativeLayout container;
+public class PhotoEditorViewMormal extends FrameLayout implements ViewTouchListener, KeyboardHeightProvider.KeyboardHeightObserver {
+    RelativeLayout container;
     public static RecyclerView recyclerView;
     private int currentFont = 0;
     CustomPaintView customPaintView;
@@ -58,7 +55,6 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
     private ViewTouchListener viewTouchListener;
     private View selectedView;
     private int selectViewIndex;
-    private int left, right, top, bottom;
     TextView add_text_done_tv;
     public ColorPicker color_picker;
     private EditText inputTextET;
@@ -69,59 +65,41 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
     int mColorCode;
     AutofitTextView autofitTextView;
     public RequestQueue requestQueue;
-    public LayoutInflater mLayoutInflater;
     boolean sticker_show = false;
     public static ImageView mainImageView;
     public static LottieAnimationView animationView;
     public static FrameLayout layout;
     String[] fonts;
-
-    public static ProgressBar progressBar;
-
-    private Typeface typeface;
-    ImageView imageButtonFontChanges, imageButtonAlignmentChanges, image_font;
+    ImageView imageButtonFontChanges, imageButtonAlignmentChanges;
     ArrayList<String> sticker;
 
     private static final int ZOOM = 2;
-    private TextView txtText;
-    private TextView tvemail;
-    private int selectTextId;
 
-
-    public PhotoEditorView(Context context) {
+    public PhotoEditorViewMormal(Context context) {
         super(context);
         init(context, null, 0);
     }
 
-    public PhotoEditorView(Context context, AttributeSet attrs) {
+    public PhotoEditorViewMormal(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0);
     }
 
-    public PhotoEditorView(Context context, AttributeSet attrs, int defStyle) {
+    public PhotoEditorViewMormal(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs, defStyle);
     }
 
     private void init(final Context context, AttributeSet attrs, int defStyle) {
-        View view = inflate(getContext(), R.layout.photo_editor_view, null);
-        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflate(getContext(), R.layout.frahment_noramal_pghoto, null);
         mainImageView = view.findViewById(R.id.image_iv);
-//        mainImageView.setAdjustViewBounds(true);
-        int width = getResources().getDisplayMetrics().widthPixels;
-        int   height = getResources().getDisplayMetrics().heightPixels/2 ;
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
-
-//        layoutParams.gravity(RelativeLayout.CENTER_IN_PARENT);
-        mainImageView.setLayoutParams(layoutParams);
         imageButtonFontChanges = view.findViewById(R.id.imageButtonFontChanges);
-        image_font = view.findViewById(R.id.font_bold);
         imageButtonAlignmentChanges = view.findViewById(R.id.imageButtonAlignmentChanges);
         animationView = view.findViewById(R.id.animation_view);
         color_picker = view.findViewById(R.id.color_picker);
         add_text_done_tv = view.findViewById(R.id.add_text_done_tv);
         fonts = getResources().getStringArray(R.array.fonts);
-        progressBar=view.findViewById(R.id.progressBar);
+
         layout = view.findViewById(R.id.layout);
         animation_view = view.findViewById(R.id.animation_view);
         container = view.findViewById(R.id.container);
@@ -130,7 +108,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
         inputTextET = view.findViewById(R.id.add_text_et);
         inputTextET.setCursorVisible(true);
         inputTextET.setFocusable(true);
-//    customPaintView = view.findViewById(R.id.paint_view);
+        customPaintView = view.findViewById(R.id.paint_view);
 
         requestQueue = Volley.newRequestQueue(getContext());
         sticker = new ArrayList<>();
@@ -140,38 +118,6 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(gridLayoutManager);
-        View rootViewText = mLayoutInflater.inflate(R.layout.view_text_layout, null);
-        View rootView1Text = mLayoutInflater.inflate(R.layout.view_email_layout, null);
-        txtText = rootViewText.findViewById(R.id.tvPhotoEditorText);
-        tvemail = rootView1Text.findViewById(R.id.tvEmailEditorText);
-
-//        txtText.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                paintButton.setVisibility(View.GONE);
-//                color_picker.setVisibility(VISIBLE);
-//                add_text_done_tv.setVisibility(VISIBLE);
-//                imageButtonFontChanges.setVisibility(VISIBLE);
-//                image_font.setVisibility(VISIBLE);
-//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-//                recyclerView.setVisibility(GONE);
-//            }
-//        });
-//
-//        tvemail.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                paintButton.setVisibility(View.GONE);
-//                color_picker.setVisibility(VISIBLE);
-//                add_text_done_tv.setVisibility(VISIBLE);
-//                imageButtonFontChanges.setVisibility(VISIBLE);
-//                image_font.setVisibility(VISIBLE);
-//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-//                recyclerView.setVisibility(GONE);
-//            }
-//        });
 
         sticker_list();
 
@@ -190,40 +136,19 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
 
         imageButtonFontChanges.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(final View view) {
+            public void onClick(View view) {
                 inputTextET.post(new Runnable() {
-
-
                     @Override
                     public void run() {
                         currentFont++;
                         if (currentFont >= fonts.length) currentFont = 0;
                         String path = fonts[currentFont];
-                        typeface = Typeface.createFromAsset(context.getAssets(), path);
+                        Typeface typeface = Typeface.createFromAsset(context.getAssets(), path);
                         inputTextET.setTypeface(typeface);
-
-
-                        if (selectTextId == 1) {
-                            txtText.setTypeface(typeface);
-                        } else if (selectTextId == 2) {
-                            tvemail.setTypeface(typeface);
-                        }
                         Log.d("FontInfo", path);
                         imageButtonAlignmentChanges.setVisibility(VISIBLE);
                     }
                 });
-            }
-        });
-        image_font.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                inputTextET.setTypeface(typeface, Typeface.BOLD);
-                if (selectTextId == 1) {
-                    txtText.setTypeface(typeface, Typeface.BOLD);
-                } else if (selectTextId == 2) {
-                    tvemail.setTypeface(typeface, Typeface.BOLD);
-                }
             }
         });
 
@@ -246,13 +171,7 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
 
             @Override
             public void onFinishedColorPicking(int color) {
-
                 inputTextET.setTextColor(color);
-                if (selectTextId == 1) {
-                    txtText.setTextColor(color);
-                } else if (selectTextId == 2) {
-                    tvemail.setTextColor(color);
-                }
                 String path = fonts[0];
                 Typeface typeface = Typeface.createFromAsset(context.getAssets(), path);
             }
@@ -261,7 +180,6 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
             public void onSettingsPressed() {
             }
         });
-
 
         add_text_done_tv.setOnClickListener(new OnClickListener() {
             @Override
@@ -280,7 +198,6 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
 
                 inputTextET.setVisibility(INVISIBLE);
                 imageButtonFontChanges.setVisibility(GONE);
-                image_font.setVisibility(GONE);
                 imageButtonAlignmentChanges.setVisibility(GONE);
                 color_picker.setVisibility(GONE);
                 add_text_done_tv.setVisibility(GONE);
@@ -297,23 +214,23 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
     }
 
     public void changeAlignment(View view) {
-        int alignment = txtText.getTextAlignment();
-//    container.setGravity(Gravity.CENTER | Gravity.BOTTOM);
-
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.LEFT;
-        txtText.setLayoutParams(layoutParams);
-
-
-
+        int alignment = inputTextET.getTextAlignment();
+        if (alignment == View.TEXT_ALIGNMENT_CENTER) {
+            inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            inputTextET.setGravity(Gravity.RIGHT);
+            inputTextET.setGravity(Gravity.CENTER_VERTICAL);
+            imageButtonAlignmentChanges.setImageResource(R.drawable.font_right);
+        } else if (alignment == View.TEXT_ALIGNMENT_TEXT_END) {
+            inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            inputTextET.setGravity(Gravity.LEFT);
+            inputTextET.setGravity(Gravity.CENTER_VERTICAL);
+            imageButtonAlignmentChanges.setImageResource(R.drawable.font_left);
+        } else if (alignment == View.TEXT_ALIGNMENT_TEXT_START) {
+            inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            imageButtonAlignmentChanges.setImageResource(R.drawable.font_center);
+            inputTextET.setGravity(Gravity.CENTER);
+        }
     }
-
-
-
-
-
-
-
 
     public void setColor(int selectedColor) {
         customPaintView.setColor(selectedColor);
@@ -361,135 +278,14 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
         color_picker.setVisibility(VISIBLE);
         add_text_done_tv.setVisibility(VISIBLE);
         imageButtonFontChanges.setVisibility(VISIBLE);
-        image_font.setVisibility(VISIBLE);
         imageButtonAlignmentChanges.setVisibility(VISIBLE);
         recyclerView.setVisibility(GONE);
-        containerView.bringToFront();
+//    containerView.bringToFront();
         inputTextET.setText(null);
         inputTextET.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         Utility.showSoftKeyboard((Activity) getContext(), inputTextET);
         createText(inputTextET.getText().toString(), inputTextET.getTypeface());
     }
-
-
-    public void festivalAddText() {
-        color_picker.setVisibility(VISIBLE);
-        add_text_done_tv.setVisibility(VISIBLE);
-        imageButtonFontChanges.setVisibility(VISIBLE);
-        image_font.setVisibility(VISIBLE);
-        imageButtonAlignmentChanges.setVisibility(VISIBLE);
-        recyclerView.setVisibility(GONE);
-//    containerView.bringToFront();
-
-        Utility.showSoftKeyboard((Activity) getContext(), inputTextET);
-        createText(inputTextET.getText().toString(), inputTextET.getTypeface());
-    }
-
-//    public void setEmailText(String text, int left, int top) {
-//        View rootViewText = mLayoutInflater.inflate(R.layout.view_email_layout, null);
-//        tvemail = rootViewText.findViewById(R.id.tvEmailEditorText);
-////        final FrameLayout frmBorder = rootViewText.findViewById(R.id.frmBorder);
-//        tvemail.setText(text);
-//        tvemail.setPadding(left, 300, 0, 0);
-//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        layoutParams.addRule(RelativeLayout.ALIGN_LEFT, RelativeLayout.TRUE);
-//        MultiTouchListener multiTouchListener = new MultiTouchListener(deleteView, container, this.imageView, true, this, layoutParams);
-//        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
-//            @Override
-//            public void onClick(View currentView) {
-//                selectTextId = 2;
-//                color_picker.setVisibility(VISIBLE);
-//                add_text_done_tv.setVisibility(GONE);
-//                imageButtonFontChanges.setVisibility(VISIBLE);
-//                image_font.setVisibility(VISIBLE);
-//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-//                recyclerView.setVisibility(GONE);
-//                selectedView = currentView;
-//                selectViewIndex = currentView.getId();
-//            }
-//
-//            @Override
-//            public void onLongClick() {
-//
-//            }
-//
-//
-//        });
-//
-//        tvemail.setOnTouchListener(new OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                selectTextId = 2;
-//                color_picker.setVisibility(VISIBLE);
-//                add_text_done_tv.setVisibility(GONE);
-//                imageButtonFontChanges.setVisibility(VISIBLE);
-//                image_font.setVisibility(VISIBLE);
-//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-//                recyclerView.setVisibility(GONE);
-//                selectedView = view;
-//                selectViewIndex = view.getId();
-//                return false;
-//            }
-//        });
-//
-//        rootViewText.setOnTouchListener(multiTouchListener);
-//        container.addView(rootViewText);
-//    }
-
-
-//    public void setText(String text, int left, int top) {
-//        View rootViewText = mLayoutInflater.inflate(R.layout.view_text_layout, null);
-//
-//
-//        txtText = rootViewText.findViewById(R.id.tvPhotoEditorText);
-//
-////        final FrameLayout frmBorder = rootViewText.findViewById(R.id.frmBorder);
-//        txtText.setText(text);
-//        txtText.setPadding(left, top, 0, 0);
-//        txtText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-//        MultiTouchListener multiTouchListener = new MultiTouchListener(deleteView, container, this.imageView, true, this, layoutParams);
-//        multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
-//            @Override
-//            public void onClick(View currentView) {
-//                selectTextId = 1;
-//                color_picker.setVisibility(VISIBLE);
-//                add_text_done_tv.setVisibility(GONE);
-//                imageButtonFontChanges.setVisibility(VISIBLE);
-//                image_font.setVisibility(VISIBLE);
-//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-//                recyclerView.setVisibility(GONE);
-//                selectedView = currentView;
-//                selectViewIndex = currentView.getId();
-//            }
-//
-//            @Override
-//            public void onLongClick() {
-//
-//            }
-//
-//
-//        });
-//        txtText.setOnTouchListener(new OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                selectTextId = 1;
-//                color_picker.setVisibility(VISIBLE);
-//                add_text_done_tv.setVisibility(GONE);
-//                imageButtonFontChanges.setVisibility(VISIBLE);
-//                image_font.setVisibility(VISIBLE);
-//                imageButtonAlignmentChanges.setVisibility(VISIBLE);
-//                recyclerView.setVisibility(GONE);
-//                selectedView = view;
-//                selectViewIndex = view.getId();
-//                return false;
-//            }
-//        });
-//
-//        rootViewText.setOnTouchListener(multiTouchListener);
-//        container.addView(rootViewText,layoutParams);
-//    }
 
     public void hideTextMode() {
         Utility.hideSoftKeyboard((Activity) getContext());
@@ -545,7 +341,6 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
                     add_text_done_tv.setVisibility(VISIBLE);
                     imageButtonAlignmentChanges.setVisibility(VISIBLE);
                     imageButtonFontChanges.setVisibility(VISIBLE);
-                    image_font.setVisibility(VISIBLE);
                     Log.i("ViewNum", ":" + selectViewIndex + " " + ((AutofitTextView) currentView).getText());
                 }
                 Utility.showSoftKeyboard((Activity) getContext(), inputTextET);
@@ -622,61 +417,6 @@ public class PhotoEditorView extends FrameLayout implements ViewTouchListener, K
         containerView.bringToFront();
         inputTextET.setVisibility(GONE);
         Utility.hideSoftKeyboard((Activity) getContext());
-    }
-
-
-    public void getImage() {
-//   URL url = null;
-//   try {
-//     url = new URL("https://www.kumbhdesign.in/mobile-app/depost/api/assets/company_logo/723/IMG-20200520-WA0005.jpg");
-//   } catch (MalformedURLException e) {
-//     e.printStackTrace();
-//   }
-//   Bitmap bmp = null;
-//   try {
-//     bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//   } catch (IOException e) {
-//     e.printStackTrace();
-//   }
-//   String path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), bmp, "Image Description", null);
-        final AutofitTextView stickerImageView = (AutofitTextView) LayoutInflater.from(getContext()).inflate(R.layout.sticker_view, null);
-        sticker_show = false;
-
-        stickerImageView.setId(container.getChildCount());
-
-        stickerImageView.setMaxTextSize(1000);
-        stickerImageView.setText("jdhjshdhjshd");
-        stickerImageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        MultiTouchListener multiTouchListener = new MultiTouchListener(deleteView, container, this.imageView, true, this, layoutParams);
-//   multiTouchListener.setOnMultiTouchListener(new MultiTouchListener.OnMultiTouchListener() {
-//     @Override public void
-//     onRemoveViewListener(View removedView) {
-//       container.removeView(removedView);
-//       stickerImageView.setText(null);
-//       stickerImageView.setVisibility(INVISIBLE);
-//       selectedView = null;
-//     }
-//   });
-
-//   multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
-//     @Override public void onClick(View currentView) {
-//       if(currentView!=null) {
-//         selectedView = currentView;
-//         selectViewIndex = currentView.getId();
-//       }
-//       Utility.showSoftKeyboard((Activity) getContext(), inputTextET);
-//     }
-//
-//     @Override
-//     public void onLongClick() {
-//     }
-//   });
-        stickerImageView.setOnTouchListener(multiTouchListener);
-        container.addView(stickerImageView, layoutParams);
-//   imageView.setImageBitmap(bmp);
     }
 
     public void hideStickers() {

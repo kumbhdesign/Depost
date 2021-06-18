@@ -181,11 +181,11 @@ public class My_Events extends AppCompatActivity implements ConnectivityReceiver
                         intent = new Intent(getApplicationContext(), Profile.class);
                         startActivity(intent);
                         break;
-                    case R.id.details:
-                        Log.v("print","sdhg");
-                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
-                        startActivity(intent);
-                        break;
+//                    case R.id.details:
+//                        Log.v("print","sdhg");
+//                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+//                        startActivity(intent);
+//                        break;
                     default:
                         break;
                 }

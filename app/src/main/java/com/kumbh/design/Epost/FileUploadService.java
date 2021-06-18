@@ -28,6 +28,7 @@ public interface FileUploadService {
             @Part("facebook_url") RequestBody  facebookUrl,
             @Part("instagram_url") RequestBody  instagramUrl,
             @Part("linkedin_url") RequestBody  linkedinUrl,
+                              @Part("twitter_url") RequestBody  twitter_url,
             @Part("company_logo_hidden") RequestBody logo_hidden,
             @Part("company_address") RequestBody company_address
     );

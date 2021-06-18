@@ -159,7 +159,7 @@ public class Festival_list_page_premium extends AppCompatActivity implements Con
             Picasso.get().load(shared_pr.getPhoto()).into(profile);
         else
             Picasso.get().load(R.drawable.avatar).into(profile);
-        requestQueue = Volley.newRequestQueue(this);
+
 
         c = Calendar.getInstance();
         pb_list = (ProgressBar) findViewById(R.id.pb_list);
@@ -635,11 +635,17 @@ public class Festival_list_page_premium extends AppCompatActivity implements Con
                         i = new Intent(getApplicationContext(), Profile.class);
                         startActivity(i);
                         break;
-                    case R.id.details:
-                        Log.v("print", "sdhg");
-                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+
+                    case R.id.menycurrentplan:
+                        Log.v("print","sdhg");
+                        Intent intent = new Intent(getApplicationContext(), currentPlanActivity.class);
                         startActivity(intent);
                         break;
+//                    case R.id.details:
+//                        Log.v("print", "sdhg");
+//                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+//                        startActivity(intent);
+//                        break;
                     default:
                         break;
                 }

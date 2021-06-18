@@ -26,9 +26,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.droidninja.imageeditengine.model.UserData;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +45,9 @@ import com.google.android.gms.common.api.Status;
 import com.kumbh.design.Epost.R;
 import com.kumbh.design.Epost.util.SessionManager;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 
@@ -65,6 +75,7 @@ public class HomrPage extends AppCompatActivity implements View.OnClickListener,
     static SessionManager shared_pr;
     public RequestQueue requestQueue;
     Intent intent;
+    private UserData user;
     Typeface tf;
     static GoogleApiClient mgoogleApiClient;
     private String festival_list_URL = " https://www.googleapis.com/calendar/v3/calendars/calendarId/events";
@@ -92,7 +103,7 @@ public class HomrPage extends AppCompatActivity implements View.OnClickListener,
             getWindow().setEnterTransition(fade);
             getWindow().setExitTransition(fade);
         }
-
+        getData();
         festival_ly = (LinearLayout) findViewById(R.id.festival_ly);
         birthday_ly = (LinearLayout) findViewById(R.id.birthday_ly);
         loveu_ly = (LinearLayout) findViewById(R.id.loveu_ly);
@@ -151,10 +162,25 @@ public class HomrPage extends AppCompatActivity implements View.OnClickListener,
         bt_go_premium.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(getApplicationContext(), Festival_list_page_premium.class);
-                intent.putExtra("id", "1");
-                startActivity(intent);
-                finish();
+
+
+//                String path= shared_pr.getLogoPhoto();
+
+                if(user!=null && user.getCompanyEmail()!=null)
+                {
+                    intent = new Intent(getApplicationContext(), get_premium_activity.class);
+                    intent.putExtra("id", "1");
+                    startActivity(intent);
+                }
+                else{
+
+                    Toast.makeText(HomrPage.this,"Please complete profile detail",Toast.LENGTH_LONG).show();
+                    intent = new Intent(getApplicationContext(), Profile.class);
+                    intent.putExtra("id", "1");
+                    startActivity(intent);
+                }
+
+
             }
         });
 
@@ -186,6 +212,66 @@ public class HomrPage extends AppCompatActivity implements View.OnClickListener,
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
+    }
+
+    private void getData() {
+        String userId = shared_pr.getUserId();
+
+        //  Log.d("DATA_URL","https://api.qwant.com/api/search/images?count=50&q="+festival+"+backgrounds&t=images&safesearch=1&locale=en_US&uiv=4");
+
+        StringRequest request = new StringRequest(Request.Method.GET, "https://www.kumbhdesign.in/mobile-app/depost/api/profile-update/" + userId, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                try {
+//                    pb_setimage.setVisibility(View.GONE);
+
+
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    JSONObject jsonObject1 = jsonObject.getJSONObject("response");
+                    JSONObject jsonObject2 = jsonObject1.getJSONObject("user_data");
+
+                    int error = jsonObject2.getInt("error");
+                    if (error == 0) {
+
+                        JSONObject userData = jsonObject2.getJSONObject("user");
+                        user = new UserData(userData.getString("facebook_url"), userData.getString("company_email"), userData.getString("company_logo_path"), userData.getString("website_url"), userData.getString("instagram_url"), userData.getString("linkedin_url"), userData.getString("mobile_number"), userData.getString("company_address"), userData.getString("twitter_url"));
+                        Log.v("userData", user.getCompanyEmail());
+
+
+                    }
+
+
+
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+//                        pb_setimage.setVisibility(View.GONE);
+                        Log.d("Error", error.toString());
+                        Toast.makeText(HomrPage.this, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        RequestQueue requestQueue = Volley.newRequestQueue(HomrPage.this);
+        requestQueue.add(request);
     }
 
     public void didTapButton(View view) {
@@ -293,9 +379,9 @@ public class HomrPage extends AppCompatActivity implements View.OnClickListener,
                         startActivity(intent);
                         break;
 
-                    case R.id.details:
+                    case R.id.menycurrentplan:
                         Log.v("print","sdhg");
-                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+                        Intent intent = new Intent(getApplicationContext(), currentPlanActivity.class);
                         startActivity(intent);
                         break;
 

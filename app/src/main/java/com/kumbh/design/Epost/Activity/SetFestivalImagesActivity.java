@@ -100,7 +100,7 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set__images);
+        setContentView(R.layout.acitivity_layout_festiveal);
 
 //        mInterstitialAd = new InterstitialAd(SetFestivalImagesActivity.this);
 //
@@ -193,20 +193,7 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
         animation = AnimationUtils.loadAnimation(this, R.anim.move);
         animation1 = AnimationUtils.loadAnimation(this, R.anim.rotate);
 
-        choose_color.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (flag == 0) {
-                    choose_color.animate().rotation(180).start();
-                    set_color.setVisibility(View.VISIBLE);
-                    flag = 1;
-                } else {
-                    choose_color.animate().rotation(360).start();
-                    set_color.setVisibility(View.GONE);
-                    flag = 0;
-                }
-            }
-        });
+
         getData();
 
         back_color1.setOnClickListener(new View.OnClickListener() {
@@ -321,6 +308,7 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
                                JSONObject object1 = jsonArray.getJSONObject(i);
                                list.add(new ListTemplateItem(object1.getString("post_id"), object1.getString("template_title"), object1.getString("template_id"), object1.getString("template_demo_image_path"), object1.getString("template_image_path")));
                            }
+                           gridView.setVisibility(View.VISIBLE);
                            gridView.addItemDecoration(new DividerItemDecoration(SetFestivalImagesActivity.this,
                                    DividerItemDecoration.HORIZONTAL));
                            gridView.addItemDecoration(new DividerItemDecoration(SetFestivalImagesActivity.this,
@@ -328,7 +316,8 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
                            gridView.setLayoutManager(new GridLayoutManager(SetFestivalImagesActivity.this, 2));
                            FestivalImageAdapter adapter = new FestivalImageAdapter(SetFestivalImagesActivity.this, list, "", id);
                            gridView.setAdapter(adapter);
-                           gridView.setVisibility(View.VISIBLE);
+                           adapter.notifyDataSetChanged();
+
 //                        include.setVisibility(View.GONE);
                        } else {
                            gridView.setVisibility(View.GONE);
@@ -519,10 +508,16 @@ public class SetFestivalImagesActivity extends AppCompatActivity implements Conn
                         Intent i = new Intent(getApplicationContext(), Profile.class);
                         startActivity(i);
                         break;
-                    case R.id.details:
-                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+
+                        case R.id.menycurrentplan:
+                        Log.v("print","sdhg");
+                        Intent intent = new Intent(getApplicationContext(), currentPlanActivity.class);
                         startActivity(intent);
                         break;
+//                    case R.id.details:
+//                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+//                        startActivity(intent);
+//                        break;
 
                     default:
                         break;

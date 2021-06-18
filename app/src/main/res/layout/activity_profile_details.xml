@@ -50,13 +50,14 @@
 
         <ImageView
             android:id="@+id/img_edit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:tint="@color/white"
+            android:backgroundTint="@color/colorPrimary"
             android:background="@drawable/round_outline"
-            android:layout_marginLeft="-43dip"
-            android:layout_toRightOf="@+id/my_logo"
-            android:layout_marginTop="157dp"
+            android:layout_marginTop="195dp"
+            android:layout_marginLeft="-43dp"
             android:src="@drawable/edit" />
 
 
@@ -130,13 +131,24 @@
             android:hint="Instagram link" />
 
         <EditText
-            android:id="@+id/et_linkdin_link"
+            android:id="@+id/et_twitter_link"
             android:layout_width="match_parent"
             android:background="@drawable/border_edit"
             android:padding="8dp"
             android:layout_margin="10dp"
             android:layout_height="50dp"
             android:layout_below="@id/et_insta_link"
+            android:layout_marginTop="12dp"
+            android:hint="Twitter link" />
+
+        <EditText
+            android:id="@+id/et_linkedin_link"
+            android:layout_width="match_parent"
+            android:background="@drawable/border_edit"
+            android:padding="8dp"
+            android:layout_margin="10dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/et_twitter_link"
             android:layout_marginTop="12dp"
             android:hint="Linkedin link" />
 
@@ -146,7 +158,7 @@
             android:id="@+id/bt_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/et_linkdin_link"
+            android:layout_below="@+id/et_linkedin_link"
             android:layout_margin="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="30dp"

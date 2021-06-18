@@ -22,6 +22,7 @@ public class SessionManager {
     private static final String SHARED_PREF_NAME = "FCMSharedPref";
     private static final String TAG_TOKEN = "tagtoken";
     private static final String PERSON_PHOTO = "person_photo";
+    private static final String LOGO_PHOTO = "logo_photo";
     private static final String PERSON_Country = "person_country";
     private static final String USER_ID = "user_id";
 
@@ -59,6 +60,15 @@ public class SessionManager {
         editor.putString(PERSON_PHOTO, email);
         editor.commit();
     }
+    public void setLogoPhoto(String path) {
+        editor.putString(LOGO_PHOTO, path);
+        editor.commit();
+    }
+
+    public String getLogoPhoto() {
+        return pref.getString(LOGO_PHOTO, null);
+    }
+
 
     public String getAccountname() {
         return pref.getString(PREF_ACCOUNT_NAME, null);

@@ -94,21 +94,21 @@ public class Set_Images extends AppCompatActivity implements ConnectivityReceive
 
         checkConnection();
 
-        MobileAds.initialize(getApplicationContext(), "ca-app-pub-6008474329722648~3510787218");
-
-        // set the ad unit ID
-        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-
-        // Load ads into Interstitial Ads
-        mInterstitialAd.loadAd(adRequest);
-
-        mInterstitialAd.setAdListener(new AdListener() {
-            public void onAdLoaded() {
-                showInterstitial();
-            }
-        });
+//        MobileAds.initialize(getApplicationContext(), "ca-app-pub-6008474329722648~3510787218");
+//
+//        // set the ad unit ID
+//        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+//
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//
+//        // Load ads into Interstitial Ads
+//        mInterstitialAd.loadAd(adRequest);
+//
+//        mInterstitialAd.setAdListener(new AdListener() {
+//            public void onAdLoaded() {
+//                showInterstitial();
+//            }
+//        });
 
         pb_setimage = (ProgressBar) findViewById(R.id.pb_setimage);
 
@@ -301,7 +301,9 @@ public class Set_Images extends AppCompatActivity implements ConnectivityReceive
                     }
                     image_list = jsonArray.getJSONObject(0).getString("media");
 //                    Picasso.get().load(jsonArray.getJSONObject(0).getString("link")).placeholder(R.drawable.preview).into(back_image);
-
+                    LinearLayoutManager llm = new LinearLayoutManager(Set_Images.this);
+                    llm.setOrientation(LinearLayoutManager.VERTICAL);
+                    gridView.setLayoutManager(llm);
                     GridViewAdapter gridViewAdapter = new GridViewAdapter(Set_Images.this, images, festival, id);
                     gridView.setAdapter(gridViewAdapter);
 
@@ -485,10 +487,15 @@ public class Set_Images extends AppCompatActivity implements ConnectivityReceive
                         Intent i = new Intent(getApplicationContext(), Profile.class);
                         startActivity(i);
                         break;
-                    case R.id.details:
-                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+                    case R.id.menycurrentplan:
+                        Log.v("print","sdhg");
+                        Intent intent = new Intent(getApplicationContext(), currentPlanActivity.class);
                         startActivity(intent);
                         break;
+//                    case R.id.details:
+//                        Intent intent = new Intent(getApplicationContext(), ProfileDetails.class);
+//                        startActivity(intent);
+//                        break;
 
                     default:
                         break;
