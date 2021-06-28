@@ -1111,7 +1111,7 @@ public class PhotoFestivalFragment extends BaseFragment implements View.OnClickL
 //        txtEmail.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-        layoutParams.setMargins(0, 20, 0, 0);
+        layoutParams.setMargins(0, 30, 10, 0);
         MultiTouchListener multiTouchListener = new MultiTouchListener(null, container, imageView, true, this, layoutParams);
         multiTouchListener.setOnGestureControl(new MultiTouchListener.OnGestureControl() {
             @Override
